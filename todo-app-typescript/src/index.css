@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+:root {
+  --color-danger: #FF5631;
+  --color-danger-hover: #fc360e;
+  --color-success: #57CB4C;
+  --color-dark: #0D0D0D;
+  --color-grey: #1E1E1E;
+  --color-primary: #CEBEA4;
+  --color-secondary: #998d7a;
+  --border-radius: 10px;
+  --font-size-primary: 32px;
+  --font-size-secondary: 28px;
+  --font-size-small-primary: 22px;
+  --font-size-small-secondary: 18px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  height: 100vh;
+  width: 100%;
+  background: var(--color-dark);
+}
+
+.card {
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius);
+}
+
+.todo-container {
+  max-width: 650px;
+  margin: auto;
+}
+
+.nav-logo-left {
+  color: var(--color-primary);
+}
+.nav-logo-right {
+  color: var(--color-danger);
+}
+
+.todo-hero-container {
+  padding: 40px;
+}
+.todo-hero-title {
+  font-size: var(--font-size-primary);
+  color: var(--color-primary);
+}
+.todo-hero-subtitle {
+  font-size: var(--font-size-secondary);
+  color: var(--color-secondary);
+  letter-spacing: 2px;
+}
+.todo-hero-right {
+  font-size: var(--font-size-primary);
+  padding: 40px;
+  background: var(--color-danger);
+  border-radius: var(--border-radius);
+}
+
+.form-container input {
+  outline: none;
+  background: var(--color-grey);
+  font-size: var(--font-size-small-primary);
+  border-radius: var(--border-radius);
+}
+.form-container button {
+  background: var(--color-danger);
+  border-radius: var(--border-radius);
+}
+.form-container button:hover {
+  background: var(--color-danger-hover);
+}
+
+.todo-item-toggle-button {
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--color-danger);
+  border-radius: var(--border-radius);
+  background: transparent;
+}
+.todo-item-toggle-button.active {
+  border: 2px solid var(--color-success);
+  background: var(--color-success);
+}
+.todo-item-title {
+  font-size: var(--font-size-secondary);
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.todo-item-right button {
+  font-size: var(--font-size-secondary);
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--color-secondary);
+}
+
+@media screen and (max-width: 768px) {
+  .todo-container {
+    max-width: 500px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .todo-hero-container {
+    padding: 30px;
+  }
+  .todo-hero-title {
+    font-size: var(--font-size-small-primary);
+  }
+  .todo-hero-subtitle {
+    font-size: var(--font-size-small-secondary);
+    letter-spacing: normal;
+  }
+  .todo-hero-right {
+    font-size: var(--font-size-small-primary);
+    padding: 30px;
+  }
+  .form-container input {
+    font-size: var(--font-size-small-secondary);
+  }
+  .todo-item-toggle-button {
+    width: 20px;
+    height: 20px;
+  }
+  .todo-item-title {
+    font-size: var(--font-size-small-secondary);
+  }
+}
