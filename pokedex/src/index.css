@@ -216,6 +216,11 @@ input {
   flex-direction: column;
   scrollbar-width: none;
   overflow-y: scroll;
+  margin-bottom: 0;
+}
+
+#current-pokemon-evolution-chain-container {
+  margin-bottom: 10px;
 }
 
 .hide {
