@@ -28,7 +28,7 @@ export const createUser = async (data: CreateUserInput) => {
       role: true,
       createdAt: true,
     }
-  })
+  });
 };
 
 export const loginUser = async (email: string) => {
@@ -42,4 +42,4 @@ export const loginUser = async (email: string) => {
       password: true,
     }
   });
-}
+};
