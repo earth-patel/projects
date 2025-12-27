@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id               Int       @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  email            String    @unique
+  phone            String?
+  password         String
+  imageUrl         String?
+  emailVerifiedAt  DateTime?
+  verificationCode String?
+
+  createdOrganizations  Organization[]
+  organizationUserRoles OrganizationUserRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  @@map("users")
+}
+
+model Organization {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String?
+  createdById Int     @map("createdBy")
+
+  organizationUserRoles OrganizationUserRole[]
+  createdBy             User                   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  @@map("organizations")
+}
+
+model Role {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  organizationUserRoles OrganizationUserRole[]
+  permissions           RolePermission[]       @relation("RolePermissions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  @@map("roles")
+}
+
+model OrganizationUserRole {
+  id             Int @id @default(autoincrement())
+  userId         Int
+  organizationId Int
+  roleId         Int
+
+  user         User         @relation(fields: [userId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  role         Role         @relation(fields: [roleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  // ensure a user cannot be assigned the same role twice in the same organization
+  @@unique([userId, organizationId, roleId])
+
+  @@map("organization_user_roles")
+}
+
+model RolePermission {
+  id       Int    @id @default(autoincrement())
+  actions  String @db.VarChar(255)
+  roleId   Int
+  moduleId Int
+
+  role   Role   @relation("RolePermissions", fields: [roleId], references: [id])
+  module Module @relation("ModulePermissions", fields: [moduleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  // ensure a role cannot have duplicate permissions for the same module
+  @@unique([roleId, moduleId])
+
+  @@map("role_permissions")
+}
+
+model Module {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  permissions RolePermission[] @relation("ModulePermissions")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    Int      @default(1)     @db.TinyInt
+
+  @@map("modules")
+}
