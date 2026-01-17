@@ -1,0 +1,10 @@
+a {
+  text-decoration: none;
+  color: black;
+}
+.error {
+  color: red;
+}
+.success {
+  color: green;
+}
