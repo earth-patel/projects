@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 import { clearSuccessMessage, login, setErrors } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/index';
@@ -13,6 +13,7 @@ type LoginErrors = Partial<LoginPayload> & { form?: string };
 
 const Login = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { loading, error, successMessage } = useAppSelector(
     state => state.auth
   );
@@ -28,7 +29,7 @@ const Login = () => {
     return error;
   };
 
-  const onLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(clearSuccessMessage());
 
@@ -44,7 +45,10 @@ const Login = () => {
       return;
     }
 
-    dispatch(login(payload));
+    const resultAction = await dispatch(login(payload));
+    if (login.fulfilled.match(resultAction)) {
+      navigate('/profile', { replace: true });
+    }
   };
 
   return (

@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-import { API_URL } from '../common';
-
 /* ---------- CONSTANTS ---------- */
+const API_URL = 'http://localhost:3000/api/auth';
+
 const fallbackError = { form: 'Something went wrong' };
 
 /* ---------- TYPES ---------- */
@@ -22,10 +22,13 @@ type RegisterPayload = {
 };
 
 type AuthErrors = {
+  // field-specific errors
   firstName?: string;
   lastName?: string;
   email?: string;
   password?: string;
+
+  // general form error
   form?: string;
 };
 
@@ -46,6 +49,32 @@ const initialState: AuthState = {
 };
 
 /* ---------- THUNKS ---------- */
+export const fetchMe = createAsyncThunk<
+  { user: User }, // returned on success
+  void, // no arguments needed
+  {
+    state: { auth: AuthState };
+    rejectValue: { errors: AuthErrors };
+  }
+>('auth/fetchMe', (_, { getState, rejectWithValue }) => {
+  const { token } = getState().auth;
+
+  if (!token) {
+    return rejectWithValue({
+      errors: { form: 'Token not found. Please log in again.' }
+    });
+  }
+
+  return axios
+    .get(`${API_URL}/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then(res => res.data)
+    .catch(error => {
+      return rejectWithValue(error.response?.data);
+    });
+});
+
 export const login = createAsyncThunk<
   { token: string }, // returned on success
   { email: string; password: string }, // argument
@@ -82,11 +111,12 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout(state) {
+      localStorage.removeItem('token');
       state.user = null;
       state.token = null;
-      state.error = null;
+      state.loading = false;
       state.successMessage = null;
-      localStorage.removeItem('token');
+      state.error = null;
     },
     setErrors(state, action: { payload: AuthErrors }) {
       state.error = action.payload;
@@ -135,12 +165,29 @@ const authSlice = createSlice({
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         const errors = action.payload?.errors;
+        state.error =
+          errors && Object.keys(errors).length > 0 ? errors : fallbackError;
+      })
 
-        if (errors && Object.keys(errors).length > 0) {
-          state.error = errors;
-        } else {
-          state.error = fallbackError;
-        }
+      // fetchMe
+      .addCase(fetchMe.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchMe.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.error = null;
+      })
+      .addCase(fetchMe.rejected, (state, action) => {
+        state.loading = false;
+        state.user = null;
+        state.token = null;
+        localStorage.removeItem('token');
+
+        const errors = action.payload?.errors;
+        state.error =
+          errors && Object.keys(errors).length > 0 ? errors : fallbackError;
       });
   }
 });

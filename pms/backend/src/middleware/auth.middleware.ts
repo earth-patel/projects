@@ -32,15 +32,13 @@ export const authMiddleware = (
     if (!token) {
       return sendErrorResponse(res, {
         statusCode: 401,
-        message: 'Token not found'
+        message: 'Token not found',
+        errors: { form: 'Token not found. Please log in again.' }
       });
     }
 
     if (!process.env.JWT_SECRET) {
-      return sendErrorResponse(res, {
-        statusCode: 500,
-        message: 'JWT configuration missing'
-      });
+      return sendErrorResponse(res);
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
@@ -52,13 +50,15 @@ export const authMiddleware = (
     if (error.name === 'TokenExpiredError') {
       return sendErrorResponse(res, {
         statusCode: 401,
-        message: 'Token has expired'
+        message: 'Token has expired',
+        errors: { form: 'Token has expired. Please log in again.' }
       });
     }
     if (error.name === 'JsonWebTokenError') {
       return sendErrorResponse(res, {
         statusCode: 401,
-        message: 'Invalid token'
+        message: 'Invalid token',
+        errors: { form: 'Invalid token. Please log in again.' }
       });
     }
 

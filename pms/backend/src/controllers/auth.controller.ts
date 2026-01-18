@@ -20,10 +20,18 @@ export const me = async (req: AuthRequest, res: Response) => {
       }
     });
 
-    return res.status(200).json(user);
+    if (!user) {
+      return sendErrorResponse(res, {
+        statusCode: 401,
+        message: 'User not found',
+        errors: { form: 'User not found. Please log in again.' }
+      });
+    }
+
+    return res.status(200).json({ user });
   } catch (error) {
     console.error('Error fetching user profile:', error);
-    return sendErrorResponse(res, { statusCode: 401 });
+    return sendErrorResponse(res);
   }
 };
 
@@ -86,7 +94,7 @@ export const login = async (req: Request, res: Response) => {
     );
 
     res.status(200).json({
-      token,
+      token
     });
   } catch (error) {
     console.error('Error logging in user:', error);
@@ -127,12 +135,15 @@ export const register = async (req: Request, res: Response) => {
     });
   } catch (error) {
     // Handle unique constraint violation for email
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
       return sendErrorResponse(res, {
         statusCode: 400,
         message: 'Email already in use',
         errors: { email: 'Email already in use' }
-      })
+      });
     }
 
     console.error('Error registering user:', error);

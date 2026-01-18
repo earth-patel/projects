@@ -64,9 +64,7 @@ const Register = () => {
       <h2>Register</h2>
 
       <input type="text" name="firstName" placeholder="First Name" required />
-      {error?.firstName && (
-        <div className="error">{error.firstName}</div>
-      )}
+      {error?.firstName && <div className="error">{error.firstName}</div>}
       {!error?.firstName && <br />}
       <br />
 
