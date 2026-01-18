@@ -1,55 +1,30 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
 
+import FormError from '../components/FormError';
 import { register, setErrors } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/index';
-
-type RegisterPayload = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-};
-
-type RegisterErrors = Partial<RegisterPayload> & { form?: string };
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { validateRegister } from '../utils/validators';
 
 const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, error } = useAppSelector(state => state.auth);
 
-  const validate = (data: RegisterPayload): RegisterErrors => {
-    const error: RegisterErrors = {};
-
-    if (!data.firstName) error.firstName = 'First name is required';
-    if (!data.lastName) error.lastName = 'Last name is required';
-
-    if (!data.email) error.email = 'Email is required';
-    else if (!emailRegex.test(data.email)) error.email = 'Invalid email format';
-
-    if (!data.password) error.password = 'Password is required';
-    else if (data.password.length < 8)
-      error.password = 'Password must be at least 8 characters long';
-
-    return error;
-  };
-
   const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
-    const payload: RegisterPayload = {
+    const payload = {
       firstName: String(formData.get('firstName')),
       lastName: String(formData.get('lastName')),
       email: String(formData.get('email')),
       password: String(formData.get('password'))
     };
 
-    const validationErrors = validate(payload);
-    if (Object.keys(validationErrors).length) {
-      dispatch(setErrors(validationErrors));
+    const errors = validateRegister(payload);
+    if (Object.keys(errors).length) {
+      dispatch(setErrors(errors));
       return;
     }
 
@@ -64,23 +39,19 @@ const Register = () => {
       <h2>Register</h2>
 
       <input type="text" name="firstName" placeholder="First Name" required />
-      {error?.firstName && <div className="error">{error.firstName}</div>}
-      {!error?.firstName && <br />}
+      <FormError message={error?.firstName} />
       <br />
 
       <input type="text" name="lastName" placeholder="Last Name" required />
-      {error?.lastName && <div className="error">{error.lastName}</div>}
-      {!error?.lastName && <br />}
+      <FormError message={error?.lastName} />
       <br />
 
       <input type="email" name="email" placeholder="Email" required />
-      {error?.email && <div className="error">{error.email}</div>}
-      {!error?.email && <br />}
+      <FormError message={error?.email} />
       <br />
 
       <input type="password" name="password" placeholder="Password" required />
-      {error?.password && <div className="error">{error.password}</div>}
-      {!error?.password && <br />}
+      <FormError message={error?.password} />
       <br />
 
       <button type="submit" disabled={loading}>

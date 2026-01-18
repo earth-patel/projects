@@ -2,7 +2,11 @@ import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt, { type SignOptions } from 'jsonwebtoken';
 
-import { isValidEmail, isValidPasswordLength, sendErrorResponse } from '../common';
+import {
+  isValidEmail,
+  isValidPasswordLength,
+  sendErrorResponse
+} from '../common';
 import { Prisma } from '../../generated/prisma/client';
 import { AuthRequest } from '../middleware/auth.middleware';
 import prisma from '../prisma';
@@ -49,7 +53,8 @@ export const login = async (req: Request, res: Response) => {
   else if (!isValidEmail(email)) errors.email = 'Invalid email format';
 
   if (!password) errors.password = 'Password is required';
-  else if (!isValidPasswordLength(password)) errors.password = 'Password must be at least 8 characters long';
+  else if (!isValidPasswordLength(password))
+    errors.password = 'Password must be at least 8 characters long';
 
   if (Object.keys(errors).length > 0) {
     return sendErrorResponse(res, {
@@ -64,7 +69,8 @@ export const login = async (req: Request, res: Response) => {
     if (!user) return sendErrorResponse(res, INVALID_CREDENTIALS_ERROR);
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) return sendErrorResponse(res, INVALID_CREDENTIALS_ERROR);
+    if (!isPasswordValid)
+      return sendErrorResponse(res, INVALID_CREDENTIALS_ERROR);
 
     if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
       throw new Error('JWT configuration missing');
@@ -94,7 +100,8 @@ export const register = async (req: Request, res: Response) => {
   else if (!isValidEmail(email)) errors.email = 'Invalid email format';
 
   if (!password) errors.password = 'Password is required';
-  else if (!isValidPasswordLength(password)) errors.password = 'Password must be at least 8 characters long';
+  else if (!isValidPasswordLength(password))
+    errors.password = 'Password must be at least 8 characters long';
 
   if (Object.keys(errors).length > 0) {
     return sendErrorResponse(res, {

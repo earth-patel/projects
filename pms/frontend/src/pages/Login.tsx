@@ -1,15 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router';
 
+import FormError from '../components/FormError';
 import { clearSuccessMessage, login, setErrors } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/index';
-
-type LoginPayload = {
-  email: string;
-  password: string;
-};
-
-type LoginErrors = Partial<LoginPayload> & { form?: string };
+import { validateLogin } from '../utils/validators';
 
 const Login = () => {
   const dispatch = useAppDispatch();
@@ -18,30 +13,19 @@ const Login = () => {
     state => state.auth
   );
 
-  const validate = (data: LoginPayload): LoginErrors => {
-    const error: LoginErrors = {};
-
-    if (!data.email) error.email = 'Email is required';
-    if (!data.password) error.password = 'Password is required';
-    else if (data?.password.length < 8)
-      error.password = 'Password must be at least 8 characters long';
-
-    return error;
-  };
-
   const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(clearSuccessMessage());
 
     const formData = new FormData(e.currentTarget);
-    const payload: LoginPayload = {
+    const payload = {
       email: String(formData.get('email')),
       password: String(formData.get('password'))
     };
 
-    const validationErrors = validate(payload);
-    if (Object.keys(validationErrors).length) {
-      dispatch(setErrors(validationErrors));
+    const errors = validateLogin(payload);
+    if (Object.keys(errors).length) {
+      dispatch(setErrors(errors));
       return;
     }
 
@@ -58,13 +42,11 @@ const Login = () => {
       {successMessage && <div className="success">{successMessage}</div>}
 
       <input type="email" name="email" placeholder="Email" required />
-      {error?.email && <div className="error">{error.email}</div>}
-      {!error?.email && <br />}
+      <FormError message={error?.email} />
       <br />
 
       <input type="password" name="password" placeholder="Password" required />
-      {error?.password && <div className="error">{error.password}</div>}
-      {!error?.password && <br />}
+      <FormError message={error?.password} />
       <br />
 
       <button type="submit" disabled={loading}>

@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 
-import NotFound from '../components/NotFound';
+import NotFound from '../pages/NotFound';
 import publicRoutes from './publicRoutes';
 import privateRoutes from './privateRoutes';
 

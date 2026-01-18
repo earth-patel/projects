@@ -1,10 +1,12 @@
-import axios from 'axios';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
-/* ---------- CONSTANTS ---------- */
-const API_URL = 'http://localhost:3000/api/auth';
+import { api } from '../api/axios';
 
+/* ---------- CONSTANTS ---------- */
 const fallbackError = { form: 'Something went wrong' };
+
+/* ---------- HELPERS ---------- */
+const handleError = (errors?: AuthErrors) => errors && Object.keys(errors).length ? errors : fallbackError;
 
 /* ---------- TYPES ---------- */
 type User = {
@@ -65,14 +67,10 @@ export const fetchMe = createAsyncThunk<
     });
   }
 
-  return axios
-    .get(`${API_URL}/me`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+  return api
+    .get(`auth/me`, { headers: { Authorization: `Bearer ${token}` } })
     .then(res => res.data)
-    .catch(error => {
-      return rejectWithValue(error.response?.data);
-    });
+    .catch(err => rejectWithValue(err.response?.data));
 });
 
 export const login = createAsyncThunk<
@@ -80,14 +78,10 @@ export const login = createAsyncThunk<
   { email: string; password: string }, // argument
   { rejectValue: { errors: AuthErrors } }
 >('auth/login', (data, { rejectWithValue }) => {
-  return axios
-    .post(`${API_URL}/login`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+  return api
+    .post(`auth/login`, data)
     .then(res => res.data)
-    .catch(error => {
-      return rejectWithValue(error.response?.data);
-    });
+    .catch(err => rejectWithValue(err.response?.data));
 });
 
 export const register = createAsyncThunk<
@@ -95,14 +89,10 @@ export const register = createAsyncThunk<
   RegisterPayload, // argument
   { rejectValue: { errors: AuthErrors } }
 >('auth/register', (data, { rejectWithValue }) => {
-  return axios
-    .post(`${API_URL}/register`, data, {
-      headers: { 'Content-Type': 'application/json' }
-    })
+  return api
+    .post(`auth/register`, data)
     .then(res => res.data)
-    .catch(error => {
-      return rejectWithValue(error.response?.data);
-    });
+    .catch(err => rejectWithValue(err.response?.data));
 });
 
 /* ---------- SLICE ---------- */
@@ -143,13 +133,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        const errors = action.payload?.errors;
-
-        if (errors && Object.keys(errors).length > 0) {
-          state.error = errors;
-        } else {
-          state.error = fallbackError;
-        }
+        state.error = handleError(action.payload?.errors);
       })
 
       // register
@@ -164,9 +148,7 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        const errors = action.payload?.errors;
-        state.error =
-          errors && Object.keys(errors).length > 0 ? errors : fallbackError;
+        state.error = handleError(action.payload?.errors);
       })
 
       // fetchMe
@@ -184,10 +166,7 @@ const authSlice = createSlice({
         state.user = null;
         state.token = null;
         localStorage.removeItem('token');
-
-        const errors = action.payload?.errors;
-        state.error =
-          errors && Object.keys(errors).length > 0 ? errors : fallbackError;
+        state.error = handleError(action.payload?.errors);
       });
   }
 });

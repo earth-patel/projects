@@ -18,6 +18,7 @@ export const sendErrorResponse = (
   return res.status(statusCode).json({ message, errors });
 };
 
-export const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+export const isValidEmail = (email: string) =>
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 export const isValidPasswordLength = (password: string) => password.length >= 8;
