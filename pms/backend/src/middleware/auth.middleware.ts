@@ -19,7 +19,7 @@ export const authMiddleware = (
 ) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer ')) {
     return sendErrorResponse(res, {
       statusCode: 401,
       message: 'Unauthorized'
@@ -28,7 +28,6 @@ export const authMiddleware = (
 
   try {
     const token = authHeader.split(' ')[1];
-
     if (!token) {
       return sendErrorResponse(res, {
         statusCode: 401,
@@ -41,8 +40,7 @@ export const authMiddleware = (
       return sendErrorResponse(res);
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-    req.user = decoded;
+    req.user = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
     next();
   } catch (error) {
     console.error('Error verifying token:', error);
