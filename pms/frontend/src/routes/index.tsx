@@ -1,27 +1,39 @@
 import { Navigate, Route, Routes } from 'react-router';
 
-import NotFound from '../pages/NotFound';
+import AuthFallback from './guards/authFallback';
+import RequireAuth from './guards/requireAuth';
+import RequireGuest from './guards/requireGuest';
 import publicRoutes from './publicRoutes';
 import privateRoutes from './privateRoutes';
+import { useAppSelector } from '../store/index';
 
 const AppRoutes = () => {
+  const token = useAppSelector(state => state.auth.token);
+
   return (
     <Routes>
       {/* Default Route */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route
+        path="/"
+        element={<Navigate to={token ? '/profile' : '/login'} replace />}
+      />
 
       {/* Public Routes */}
-      {publicRoutes.map(({ path, element }) => (
-        <Route key={path} path={path} element={element} />
-      ))}
+      <Route element={<RequireGuest />}>
+        {publicRoutes.map(route => (
+          <Route key={route.path} {...route} />
+        ))}
+      </Route>
 
       {/* Private Routes */}
-      {privateRoutes.map(({ path, element }) => (
-        <Route key={path} path={path} element={element} />
-      ))}
+      <Route element={<RequireAuth />}>
+        {privateRoutes.map(route => (
+          <Route key={route.path} {...route} />
+        ))}
+      </Route>
 
       {/* Fallback Route */}
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<AuthFallback />} />
     </Routes>
   );
 };

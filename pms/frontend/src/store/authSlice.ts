@@ -6,7 +6,8 @@ import { api } from '../api/axios';
 const fallbackError = { form: 'Something went wrong' };
 
 /* ---------- HELPERS ---------- */
-const handleError = (errors?: AuthErrors) => errors && Object.keys(errors).length ? errors : fallbackError;
+const handleError = (errors?: AuthErrors) =>
+  errors && Object.keys(errors).length ? errors : fallbackError;
 
 /* ---------- TYPES ---------- */
 type User = {
