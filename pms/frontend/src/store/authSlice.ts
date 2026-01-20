@@ -5,6 +5,8 @@ import { api } from '../api/axios';
 /* ---------- CONSTANTS ---------- */
 const fallbackError = { form: 'Something went wrong' };
 
+type NotifyType = 'success' | 'error' | 'warning' | 'info';
+
 /* ---------- HELPERS ---------- */
 const handleError = (errors?: AuthErrors) =>
   errors && Object.keys(errors).length ? errors : fallbackError;
@@ -35,39 +37,34 @@ type AuthErrors = {
   form?: string;
 };
 
+type Notify = {
+  type: NotifyType,
+  message: string,
+}
+
 interface AuthState {
   user: User | null;
-  token: string | null;
   loading: boolean;
   error: AuthErrors | null;
-  successMessage: string | null;
+  notify: Notify | null;
 }
 
 const initialState: AuthState = {
   user: null,
-  token: localStorage.getItem('token'),
   loading: false,
   error: null,
-  successMessage: null
-};
+  notify: null,
+}
 
 /* ---------- THUNKS ---------- */
 export const fetchMe = createAsyncThunk<
   { user: User }, // returned on success
-  void, // no arguments needed
+  string, // argument (token)
   {
     state: { auth: AuthState };
     rejectValue: { errors: AuthErrors };
   }
->('auth/fetchMe', (_, { getState, rejectWithValue }) => {
-  const { token } = getState().auth;
-
-  if (!token) {
-    return rejectWithValue({
-      errors: { form: 'Token not found. Please log in again.' }
-    });
-  }
-
+>('auth/fetchMe', (token, { rejectWithValue }) => {
   return api
     .get(`auth/me`, { headers: { Authorization: `Bearer ${token}` } })
     .then(res => res.data)
@@ -104,19 +101,21 @@ const authSlice = createSlice({
     logout(state) {
       localStorage.removeItem('token');
       state.user = null;
-      state.token = null;
       state.loading = false;
-      state.successMessage = null;
+      state.notify = null;
       state.error = null;
     },
     setErrors(state, action: { payload: AuthErrors }) {
       state.error = action.payload;
     },
-    setSuccessMessage(state, action: { payload: string }) {
-      state.successMessage = action.payload;
+    clearErrors(state) {
+      state.error = null;
     },
-    clearSuccessMessage(state) {
-      state.successMessage = null;
+    setNotify(state, action: { payload: Notify  }) {
+      state.notify = action.payload;
+    },
+    clearNotify(state) {
+      state.notify = null;
     }
   },
   extraReducers: builder => {
@@ -127,8 +126,6 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
-        state.token = action.payload.token;
         localStorage.setItem('token', action.payload.token);
         state.error = null;
       })
@@ -145,7 +142,10 @@ const authSlice = createSlice({
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.successMessage = action.payload.message;
+        state.notify = {
+          type: 'success',
+          message: action.payload.message
+        }
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -164,14 +164,11 @@ const authSlice = createSlice({
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.loading = false;
-        state.user = null;
-        state.token = null;
-        localStorage.removeItem('token');
         state.error = handleError(action.payload?.errors);
       });
   }
 });
 
-export const { logout, setErrors, setSuccessMessage, clearSuccessMessage } =
+export const { logout, setErrors, clearErrors, setNotify, clearNotify } =
   authSlice.actions;
 export default authSlice.reducer;

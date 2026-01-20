@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import FormError from '../components/FormError';
-import { register, setErrors } from '../store/authSlice';
+import { clearErrors, register, setErrors } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { validateRegister } from '../utils/validators';
+import { validateRegister } from '../utils/common';
 
 const Register = () => {
   const dispatch = useAppDispatch();
@@ -60,7 +60,7 @@ const Register = () => {
       {error?.form && <div className="error">{error.form}</div>}
 
       <p>
-        Already have an account? <Link to="/login">Login</Link>
+        Already have an account? <button type='button' onClick={() => { dispatch(clearErrors()); navigate('/login'); }}>Login</button>
       </p>
     </form>
   );

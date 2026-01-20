@@ -1,21 +1,21 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 
 import FormError from '../components/FormError';
-import { clearSuccessMessage, login, setErrors } from '../store/authSlice';
+import { clearErrors, clearNotify, fetchMe, login, setErrors } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { validateLogin } from '../utils/validators';
+import { validateLogin } from '../utils/common';
 
 const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error, successMessage } = useAppSelector(
+  const { loading, error, notify } = useAppSelector(
     state => state.auth
   );
 
   const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(clearSuccessMessage());
+    dispatch(clearNotify());
 
     const formData = new FormData(e.currentTarget);
     const payload = {
@@ -29,17 +29,20 @@ const Login = () => {
       return;
     }
 
-    const resultAction = await dispatch(login(payload));
-    if (login.fulfilled.match(resultAction)) {
-      navigate('/profile', { replace: true });
-    }
+    dispatch(login(payload))
+      .unwrap()
+      .then((data) => {
+        if (data.token) dispatch(fetchMe(data.token));
+      });
   };
 
   return (
     <form onSubmit={onLogin}>
       <h2>Login</h2>
 
-      {successMessage && <div className="success">{successMessage}</div>}
+      {notify && (<div className={notify.type}>
+        {notify.message}
+      </div>)}
 
       <input type="email" name="email" placeholder="Email" required />
       <FormError message={error?.email} />
@@ -55,7 +58,7 @@ const Login = () => {
       {error?.form && <div className="error">{error.form}</div>}
 
       <p>
-        Don't have an account? <Link to="/register">Register</Link>
+        Don't have an account? <button type='button' onClick={() => { dispatch(clearErrors()); navigate('/register'); }}>Register</button>
       </p>
     </form>
   );

@@ -16,7 +16,7 @@ model User {
   password         String
   imageUrl         String?
   emailVerifiedAt  DateTime?
-  verificationCode String?
+  verificationCode String?   @unique
 
   createdOrganizations  Organization[]
   organizationUserRoles OrganizationUserRole[]

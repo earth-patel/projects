@@ -2,10 +2,10 @@ import { Navigate, Outlet } from 'react-router';
 
 import { useAppSelector } from '../store';
 
-const PublicRoutes = () => {
+const ProtectedRoutes = () => {
   const { user } = useAppSelector(state => state.auth);
 
-  return !user ? <Outlet /> : <Navigate to="/profile" replace />;
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
-export default PublicRoutes;
+export default ProtectedRoutes;

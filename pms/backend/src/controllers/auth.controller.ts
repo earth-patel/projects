@@ -34,7 +34,7 @@ export const me = async (req: AuthRequest, res: Response) => {
       return sendErrorResponse(res, {
         statusCode: 401,
         message: 'User not found',
-        errors: { form: 'User not found. Please log in again.' }
+        errors: { form: 'User not found.' }
       });
     }
 

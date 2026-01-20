@@ -22,7 +22,8 @@ export const authMiddleware = (
   if (!authHeader?.startsWith('Bearer ')) {
     return sendErrorResponse(res, {
       statusCode: 401,
-      message: 'Unauthorized'
+      message: 'Unauthorized',
+      errors: { form: 'Unauthorized access. Please try logging in again.' },
     });
   }
 
@@ -32,7 +33,7 @@ export const authMiddleware = (
       return sendErrorResponse(res, {
         statusCode: 401,
         message: 'Token not found',
-        errors: { form: 'Token not found. Please log in again.' }
+        errors: { form: 'Token not found. Please try logging in again.' }
       });
     }
 
@@ -49,14 +50,14 @@ export const authMiddleware = (
       return sendErrorResponse(res, {
         statusCode: 401,
         message: 'Token has expired',
-        errors: { form: 'Token has expired. Please log in again.' }
+        errors: { form: 'Token has expired. Please try logging in again.' }
       });
     }
     if (error.name === 'JsonWebTokenError') {
       return sendErrorResponse(res, {
         statusCode: 401,
         message: 'Invalid token',
-        errors: { form: 'Invalid token. Please log in again.' }
+        errors: { form: 'Invalid token. Please try logging in again.' }
       });
     }
 

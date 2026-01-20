@@ -1,8 +1,20 @@
+import { useEffect } from 'react';
+import { RouterProvider } from 'react-router';
+
 import './index.css';
-import AppRoutes from './routes';
+import router from './routes/routes';
+import { fetchMe } from './store/authSlice';
+import { useAppDispatch } from './store/index';
 
 function App() {
-  return <AppRoutes />;
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) dispatch(fetchMe(token as string));
+  }, [dispatch]);
+
+  return <RouterProvider router={router} />;
 }
 
 export default App;

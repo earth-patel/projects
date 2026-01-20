@@ -14,6 +14,7 @@ CREATE TABLE `users` (
     `status` TINYINT NOT NULL DEFAULT 1,
 
     UNIQUE INDEX `users_email_key`(`email`),
+    UNIQUE INDEX `users_verificationCode_key`(`verificationCode`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
