@@ -1,10 +1,10 @@
-type Props = {
-  message?: string;
+type FormErrorProps = {
+  error?: string;
 };
 
-const FormError = ({ message }: Props) => {
-  if (!message) return <br />;
-  return <div className="error">{message}</div>;
+const FormError = ({ error }: FormErrorProps) => {
+  if (!error) return <br />;
+  return <div className="error">{error}</div>;
 };
 
 export default FormError;

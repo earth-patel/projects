@@ -2,17 +2,19 @@ import React from 'react';
 import { useNavigate } from 'react-router';
 
 import FormError from '../components/FormError';
-import { clearErrors, register, setErrors } from '../store/authSlice';
+import { register } from '../store/auth/auth.thunk';
+import { clearErrors, setErrors } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import { validateRegister } from '../utils/common';
 
 const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useAppSelector(state => state.auth);
+  const { error, loading } = useAppSelector(state => state.auth);
 
   const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    dispatch(clearErrors());
 
     const formData = new FormData(e.currentTarget);
     const payload = {
@@ -28,10 +30,11 @@ const Register = () => {
       return;
     }
 
-    const resultAction = await dispatch(register(payload));
-    if (register.fulfilled.match(resultAction)) {
-      navigate('/login', { replace: true });
-    }
+    dispatch(register(payload))
+      .unwrap()
+      .then(() => {
+        navigate('/login');
+      });
   };
 
   return (
@@ -39,28 +42,37 @@ const Register = () => {
       <h2>Register</h2>
 
       <input type="text" name="firstName" placeholder="First Name" required />
-      <FormError message={error?.firstName} />
+      <FormError error={error?.firstName} />
       <br />
 
       <input type="text" name="lastName" placeholder="Last Name" required />
-      <FormError message={error?.lastName} />
+      <FormError error={error?.lastName} />
       <br />
 
       <input type="email" name="email" placeholder="Email" required />
-      <FormError message={error?.email} />
+      <FormError error={error?.email} />
       <br />
 
       <input type="password" name="password" placeholder="Password" required />
-      <FormError message={error?.password} />
+      <FormError error={error?.password} />
       <br />
 
       <button type="submit" disabled={loading}>
-        Register
+        {loading ? 'Registering...' : 'Register'}
       </button>
-      {error?.form && <div className="error">{error.form}</div>}
+      <FormError error={error?.form} />
 
       <p>
-        Already have an account? <button type='button' onClick={() => { dispatch(clearErrors()); navigate('/login'); }}>Login</button>
+        Already have an account?
+        <button
+          type="button"
+          onClick={() => {
+            dispatch(clearErrors());
+            navigate('/login');
+          }}
+        >
+          Login
+        </button>
       </p>
     </form>
   );

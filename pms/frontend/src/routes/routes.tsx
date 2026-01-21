@@ -1,47 +1,35 @@
-import { createBrowserRouter, Navigate } from "react-router";
+import { createBrowserRouter, Navigate } from 'react-router';
 
-import NotFound from "../pages/NotFound";
-import Profile from "../pages/Profile";
-import ProtectedRoutes from "./protectedRoutes";
-import Login from "../pages/Login";
-import Register from "../pages/Register";
-import PublicRoutes from "./publicRoutes";
-import { getToken } from "../utils/common";
+import Login from '../pages/Login';
+import NotFound from '../pages/NotFound';
+import Profile from '../pages/Profile';
+import Register from '../pages/Register';
+import ProtectedRoutes from './protectedRoutes';
+import PublicRoutes from './publicRoutes';
 
 const router = createBrowserRouter([
-  // Default Route
+  // Root Redirect (let public route handle this redirection)
   {
     path: '/',
-    element: getToken() ? <Navigate to="/profile" /> : <Navigate to="/login" />
+    element: <Navigate to="/login" replace />
   },
   // Public Routes
   {
     element: <PublicRoutes />,
     children: [
-      {
-        path: '/login',
-        element: <Login />
-      },
-      {
-        path: '/register',
-        element: <Register />
-      }
+      { path: '/login', element: <Login /> },
+      { path: '/register', element: <Register /> }
     ]
   },
   // Protected Routes
   {
     element: <ProtectedRoutes />,
-    children: [
-      {
-        path: '/profile',
-        element: <Profile />
-      }
-    ]
+    children: [{ path: '/profile', element: <Profile /> }]
   },
   // Fallback Route
   {
     path: '*',
-    element: getToken() ? <NotFound /> : <Navigate to="/login" />
+    element: <NotFound />
   }
 ]);
 

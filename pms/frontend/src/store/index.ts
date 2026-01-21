@@ -5,7 +5,7 @@ import {
   useSelector
 } from 'react-redux';
 
-import authReducer from './authSlice';
+import authReducer from './auth/auth.slice';
 
 /* ---------- STORE ---------- */
 export const store = configureStore({

@@ -1,86 +1,75 @@
 import type { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt, { type SignOptions } from 'jsonwebtoken';
 
-import {
-  isValidEmail,
-  isValidPasswordLength,
-  sendErrorResponse
-} from '../common';
+import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { AuthRequest } from '../middleware/auth.middleware';
-import prisma from '../prisma';
-import { createUser, loginUser } from '../services/auth.service';
+import { createUser, getUserById, loginUser } from '../services/auth.service';
+import { signAccessToken } from '../services/token.service';
+import { createErrorResponse, sendErrorResponse } from '../utils/common';
+import {
+  validateLoginDto,
+  validateRegisterDto
+} from '../utils/validation.util';
 
-const INVALID_CREDENTIALS_ERROR = {
-  statusCode: 401,
-  message: 'Invalid email or password',
-  errors: { form: 'Invalid email or password' }
-};
+/* ---------- CONSTANTS ---------- */
+const VALIDATION_FAILED = (errors: Record<string, string>) =>
+  createErrorResponse(400, 'Validation failed', errors);
 
-export const me = async (req: AuthRequest, res: Response) => {
+const INVALID_CREDENTIALS = createErrorResponse(
+  401,
+  'Invalid email or password',
+  { form: 'Invalid email or password' }
+);
+
+const EMAIL_ALREADY_EXISTS = createErrorResponse(400, 'Email already in use', {
+  email: 'Email already in use'
+});
+
+const USER_NOT_FOUND = createErrorResponse(401, 'User not found', {
+  form: 'User not found'
+});
+
+export const register = async (req: Request, res: Response) => {
+  const data = req.body as RegisterDto;
+
+  const errors = validateRegisterDto(data);
+  if (Object.keys(errors).length > 0) {
+    return sendErrorResponse(res, VALIDATION_FAILED(errors));
+  }
+
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: req.user?.userId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true
-      }
-    });
-
-    if (!user) {
-      return sendErrorResponse(res, {
-        statusCode: 401,
-        message: 'User not found',
-        errors: { form: 'User not found.' }
-      });
+    await createUser(data);
+    return res.status(201).json({ message: 'Registration successful' });
+  } catch (error) {
+    // Handle unique constraint violation for email
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      return sendErrorResponse(res, EMAIL_ALREADY_EXISTS);
     }
 
-    return res.status(200).json({ user });
-  } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.error('Error registering user:', error);
     return sendErrorResponse(res);
   }
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const errors: Record<string, string> = {};
+  const data = req.body as LoginDto;
 
-  if (!email) errors.email = 'Email is required';
-  else if (!isValidEmail(email)) errors.email = 'Invalid email format';
-
-  if (!password) errors.password = 'Password is required';
-  else if (!isValidPasswordLength(password))
-    errors.password = 'Password must be at least 8 characters long';
-
+  const errors = validateLoginDto(data);
   if (Object.keys(errors).length > 0) {
-    return sendErrorResponse(res, {
-      statusCode: 400,
-      message: 'Validation failed',
-      errors
-    });
+    return sendErrorResponse(res, VALIDATION_FAILED(errors));
   }
 
   try {
-    const user = await loginUser(email);
-    if (!user) return sendErrorResponse(res, INVALID_CREDENTIALS_ERROR);
+    const user = await loginUser(data.email);
+    if (!user) return sendErrorResponse(res, INVALID_CREDENTIALS);
+    const isPasswordValid = await bcrypt.compare(data.password, user.password);
+    if (!isPasswordValid) return sendErrorResponse(res, INVALID_CREDENTIALS);
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid)
-      return sendErrorResponse(res, INVALID_CREDENTIALS_ERROR);
-
-    if (!process.env.JWT_SECRET || !process.env.JWT_EXPIRES_IN) {
-      throw new Error('JWT configuration missing');
-    }
-
-    const token = jwt.sign(
-      { userId: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN } as SignOptions
-    );
+    const token = signAccessToken({ userId: user.id, email: user.email });
 
     res.status(200).json({ token });
   } catch (error) {
@@ -89,45 +78,17 @@ export const login = async (req: Request, res: Response) => {
   }
 };
 
-export const register = async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password } = req.body;
-  const errors: Record<string, string> = {};
-
-  if (!firstName) errors.firstName = 'First name is required';
-  if (!lastName) errors.lastName = 'Last name is required';
-
-  if (!email) errors.email = 'Email is required';
-  else if (!isValidEmail(email)) errors.email = 'Invalid email format';
-
-  if (!password) errors.password = 'Password is required';
-  else if (!isValidPasswordLength(password))
-    errors.password = 'Password must be at least 8 characters long';
-
-  if (Object.keys(errors).length > 0) {
-    return sendErrorResponse(res, {
-      statusCode: 400,
-      message: 'Validation failed',
-      errors
-    });
-  }
-
+export const me = async (req: AuthRequest, res: Response) => {
   try {
-    await createUser({ firstName, lastName, email, password });
-    return res.status(201).json({ message: 'Registration successful' });
-  } catch (error) {
-    // Handle unique constraint violation for email
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
-      return sendErrorResponse(res, {
-        statusCode: 400,
-        message: 'Email already in use',
-        errors: { email: 'Email already in use' }
-      });
+    const user = await getUserById(req.user.userId);
+
+    if (!user) {
+      return sendErrorResponse(res, USER_NOT_FOUND);
     }
 
-    console.error('Error registering user:', error);
+    return res.status(200).json({ user });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
     return sendErrorResponse(res);
   }
 };

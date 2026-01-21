@@ -1,6 +1,9 @@
 import 'dotenv/config';
 
 import app from './app';
+import { validateEnvVar } from './utils/validation.util';
+
+validateEnvVar();
 
 const PORT = process.env.PORT || 3000;
 

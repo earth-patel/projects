@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 
-import { sendErrorResponse } from '../common';
-
-interface JwtPayload {
-  userId: number;
-  email: string;
-}
+import { JwtPayload, verifyAccessToken } from '../services/token.service';
+import { createErrorResponse, sendErrorResponse } from '../utils/common';
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;
@@ -20,45 +15,43 @@ export const authMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
-    return sendErrorResponse(res, {
-      statusCode: 401,
-      message: 'Unauthorized',
-      errors: { form: 'Unauthorized access. Please try logging in again.' },
-    });
+    return sendErrorResponse(
+      res,
+      createErrorResponse(401, 'Unauthorized', {
+        form: 'Unauthorized access. Please try logging in again'
+      })
+    );
   }
 
   try {
     const token = authHeader.split(' ')[1];
     if (!token) {
-      return sendErrorResponse(res, {
-        statusCode: 401,
-        message: 'Token not found',
-        errors: { form: 'Token not found. Please try logging in again.' }
-      });
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'Token not found', {
+          form: 'Token not found. Please try logging in again'
+        })
+      );
     }
 
-    if (!process.env.JWT_SECRET) {
-      return sendErrorResponse(res);
-    }
-
-    req.user = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+    req.user = verifyAccessToken(token);
     next();
   } catch (error) {
     console.error('Error verifying token:', error);
 
     if (error.name === 'TokenExpiredError') {
-      return sendErrorResponse(res, {
-        statusCode: 401,
-        message: 'Token has expired',
-        errors: { form: 'Token has expired. Please try logging in again.' }
-      });
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'Token has expired', {
+          form: 'Token has expired. Please try logging in again'
+        })
+      );
     }
     if (error.name === 'JsonWebTokenError') {
-      return sendErrorResponse(res, {
-        statusCode: 401,
-        message: 'Invalid token',
-        errors: { form: 'Invalid token. Please try logging in again.' }
-      });
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'Invalid token', { form: 'Invalid token' })
+      );
     }
 
     return sendErrorResponse(res);
