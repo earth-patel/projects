@@ -11,12 +11,12 @@ const getJwtConfig = () => {
   return { secret, expiresIn };
 };
 
-export const signAccessToken = (payload: JwtPayload) => {
+export const signJwtAccessToken = (payload: JwtPayload) => {
   const { secret, expiresIn } = getJwtConfig();
   return jwt.sign(payload, secret, { expiresIn } as SignOptions);
 };
 
-export const verifyAccessToken = (token: string) => {
+export const verifyJwtAccessToken = (token: string) => {
   const { secret } = getJwtConfig();
   return jwt.verify(token, secret) as JwtPayload;
 };

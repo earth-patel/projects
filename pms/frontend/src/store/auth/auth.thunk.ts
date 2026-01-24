@@ -43,3 +43,15 @@ export const fetchMe = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- VERIFY EMAIL ---------- */
+export const verifyEmail = createAsyncThunk<
+  { message: string }, // returned on success
+  string, // argument (token)
+  { rejectValue: AuthErrors }
+>('auth/verifyEmail', (token, { rejectWithValue }) => {
+  return api
+    .get(`auth/verify-email?token=${token}`)
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+});

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { JwtPayload, verifyAccessToken } from '../services/token.service';
-import { createErrorResponse, sendErrorResponse } from '../utils/common';
+import { JwtPayload, verifyJwtAccessToken } from '../services/jwt.service';
+import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 
 export interface AuthRequest extends Request {
   user?: JwtPayload;
@@ -34,7 +34,7 @@ export const authMiddleware = (
       );
     }
 
-    req.user = verifyAccessToken(token);
+    req.user = verifyJwtAccessToken(token);
     next();
   } catch (error) {
     console.error('Error verifying token:', error);

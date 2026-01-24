@@ -4,6 +4,7 @@ import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
 import Profile from '../pages/Profile';
 import Register from '../pages/Register';
+import VerifyEmail from '../pages/VerifyEmail';
 import ProtectedRoutes from './protectedRoutes';
 import PublicRoutes from './publicRoutes';
 
@@ -18,7 +19,8 @@ const router = createBrowserRouter([
     element: <PublicRoutes />,
     children: [
       { path: '/login', element: <Login /> },
-      { path: '/register', element: <Register /> }
+      { path: '/register', element: <Register /> },
+      { path: '/verify-email', element: <VerifyEmail /> }
     ]
   },
   // Protected Routes

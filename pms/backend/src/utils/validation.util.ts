@@ -24,6 +24,7 @@ const validatePassword = (password: string) => {
 /* ---------- TYPES ---------- */
 type ValidationErrors<T> = Partial<Record<keyof T, string>>;
 
+/* ---------- VALIDATORS ---------- */
 export const validateRegisterDto = (data: RegisterDto) => {
   const errors: ValidationErrors<RegisterDto> = {};
 

@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchMe, login, register } from './auth.thunk';
+import { fetchMe, login, register, verifyEmail } from './auth.thunk';
 import type { AuthErrors, AuthState, NotifyPayload } from './auth.types';
 
 /* ---------- HELPERS ---------- */
@@ -90,6 +90,20 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = handleError(action.payload?.errors);
         localStorage.removeItem('token');
+      })
+
+      // verifyEmail
+      .addCase(verifyEmail.fulfilled, (state, action) => {
+        state.notify = {
+          type: 'success',
+          message: action.payload.message
+        };
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.notify = {
+          type: 'error',
+          message: action.payload?.message || 'Email verification failed'
+        };
       });
   }
 });

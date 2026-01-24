@@ -4,6 +4,7 @@ export type AuthErrors = {
   email?: string;
   password?: string;
   form?: string;
+  message?: string;
 };
 
 export type User = {

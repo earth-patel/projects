@@ -4,9 +4,14 @@ import bcrypt from 'bcrypt';
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { AuthRequest } from '../middleware/auth.middleware';
-import { createUser, getUserById, loginUser } from '../services/auth.service';
-import { signAccessToken } from '../services/token.service';
-import { createErrorResponse, sendErrorResponse } from '../utils/common';
+import {
+  createUser,
+  getUserById,
+  loginUser,
+  verifyEmailByToken
+} from '../services/auth.service';
+import { signJwtAccessToken } from '../services/jwt.service';
+import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 import {
   validateLoginDto,
   validateRegisterDto
@@ -30,6 +35,7 @@ const USER_NOT_FOUND = createErrorResponse(401, 'User not found', {
   form: 'User not found'
 });
 
+/* ---------- CONTROLLERS ---------- */
 export const register = async (req: Request, res: Response) => {
   const data = req.body as RegisterDto;
 
@@ -40,7 +46,12 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     await createUser(data);
-    return res.status(201).json({ message: 'Registration successful' });
+    return res
+      .status(201)
+      .json({
+        message:
+          'Registration successful. Please check your email to verify your account.'
+      });
   } catch (error) {
     // Handle unique constraint violation for email
     if (
@@ -69,7 +80,16 @@ export const login = async (req: Request, res: Response) => {
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
     if (!isPasswordValid) return sendErrorResponse(res, INVALID_CREDENTIALS);
 
-    const token = signAccessToken({ userId: user.id, email: user.email });
+    if (!user.emailVerifiedAt) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(403, 'Email not verified', {
+          form: 'Please verify your email to log in'
+        })
+      );
+    }
+
+    const token = signJwtAccessToken({ userId: user.id, email: user.email });
 
     res.status(200).json({ token });
   } catch (error) {
@@ -89,6 +109,33 @@ export const me = async (req: AuthRequest, res: Response) => {
     return res.status(200).json({ user });
   } catch (error) {
     console.error('Error fetching user profile:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const verifyEmail = async (req: Request, res: Response) => {
+  const { token } = req.query;
+
+  if (!token || typeof token !== 'string') {
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Invalid or missing token')
+    );
+  }
+
+  try {
+    const user = await verifyEmailByToken(token);
+
+    if (!user) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Invalid or expired token')
+      );
+    }
+
+    return res.status(200).json({ message: 'Email verified successfully' });
+  } catch (error) {
+    console.error('Error verifying email:', error);
     return sendErrorResponse(res);
   }
 };

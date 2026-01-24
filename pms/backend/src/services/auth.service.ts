@@ -1,19 +1,27 @@
 import bcrypt from 'bcrypt';
 
 import { RegisterDto } from '../dtos/auth.dto';
+import { sendVerificationEmail } from './mail.service';
 import prisma from '../prisma';
+import { generateVerificationToken } from '../utils/token.util';
 
 const SALT_ROUNDS = 10;
 
 export const createUser = async (data: RegisterDto) => {
   const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
+  const verificationCode = generateVerificationToken();
 
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       ...data,
-      password: hashedPassword
+      password: hashedPassword,
+      verificationCode
     }
   });
+
+  sendVerificationEmail(user.email, verificationCode);
+
+  return user;
 };
 
 export const loginUser = async (email: string) => {
@@ -24,6 +32,7 @@ export const loginUser = async (email: string) => {
       firstName: true,
       lastName: true,
       email: true,
+      emailVerifiedAt: true,
       password: true // intentionally included for comparison
     }
   });
@@ -37,6 +46,22 @@ export const getUserById = async (userId: number) => {
       firstName: true,
       lastName: true,
       email: true
+    }
+  });
+};
+
+export const verifyEmailByToken = async (token: string) => {
+  const user = await prisma.user.findFirst({
+    where: { verificationCode: token }
+  });
+
+  if (!user) return null;
+
+  return prisma.user.update({
+    where: { id: user.id },
+    data: {
+      emailVerifiedAt: new Date(),
+      verificationCode: null
     }
   });
 };
