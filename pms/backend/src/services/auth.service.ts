@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 
 import { RegisterDto } from '../dtos/auth.dto';
-import { sendVerificationEmail } from './mail.service';
 import prisma from '../prisma';
+import { sendVerificationEmail } from '../templates/email.template';
 import { generateVerificationToken } from '../utils/token.util';
 
 const SALT_ROUNDS = 10;

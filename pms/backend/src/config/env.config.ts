@@ -12,8 +12,7 @@ export const REQUIRED_ENV_VARS = [
   'SMTP_PORT',
   'SMTP_USER',
   'SMTP_PASS',
-  'FRONTEND_URL',
-  'RESEND_API_KEY'
+  'FRONTEND_URL'
 ] as const;
 
 export type RequiredEnvVar = (typeof REQUIRED_ENV_VARS)[number];

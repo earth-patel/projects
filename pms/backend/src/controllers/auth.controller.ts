@@ -46,12 +46,10 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     await createUser(data);
-    return res
-      .status(201)
-      .json({
-        message:
-          'Registration successful. Please check your email to verify your account.'
-      });
+    return res.status(201).json({
+      message:
+        'Registration successful. Please check your email to verify your account.'
+    });
   } catch (error) {
     // Handle unique constraint violation for email
     if (

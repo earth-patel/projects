@@ -14,8 +14,7 @@ const VerifyEmail = () => {
     if (!token) return;
 
     dispatch(verifyEmail(token))
-      .unwrap()
-      .then(() => navigate('/login', { replace: true }));
+    navigate('/login', { replace: true });
   }, [dispatch, navigate, params]);
 
   return <p>Verifying email...</p>;
