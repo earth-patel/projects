@@ -3,7 +3,7 @@ import { RouterProvider } from 'react-router';
 
 import './index.css';
 import router from './routes/routes';
-import { fetchMe } from './store/authSlice';
+import { fetchMe } from './store/auth/auth.thunk';
 import { useAppDispatch } from './store/index';
 
 function App() {
