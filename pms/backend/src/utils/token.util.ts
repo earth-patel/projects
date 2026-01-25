@@ -1,4 +1,4 @@
 import crypto from 'crypto';
 
-export const generateVerificationToken = () =>
-  crypto.randomBytes(32).toString('hex');
+export const generateToken = (size = 32) =>
+  crypto.randomBytes(size).toString('hex');

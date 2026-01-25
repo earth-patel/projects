@@ -3,13 +3,13 @@ import bcrypt from 'bcrypt';
 import { RegisterDto } from '../dtos/auth.dto';
 import prisma from '../prisma';
 import { sendVerificationEmail } from '../templates/email.template';
-import { generateVerificationToken } from '../utils/token.util';
+import { generateToken } from '../utils/token.util';
 
 const SALT_ROUNDS = 10;
 
 export const createUser = async (data: RegisterDto) => {
   const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
-  const verificationCode = generateVerificationToken();
+  const verificationCode = generateToken();
 
   const user = await prisma.user.create({
     data: {
@@ -74,7 +74,7 @@ export const resendVerificationEmailByEmail = async (email: string) => {
   if (!user) return null;
   if (user.emailVerifiedAt) return 'EMAIL_ALREADY_VERIFIED';
 
-  const verificationCode = generateVerificationToken();
+  const verificationCode = generateToken();
 
   await prisma.user.update({
     where: { id: user.id },
