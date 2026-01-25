@@ -13,7 +13,7 @@ const VerifyEmail = () => {
     const token = params.get('token');
     if (!token) return;
 
-    dispatch(verifyEmail(token))
+    dispatch(verifyEmail(token));
     navigate('/login', { replace: true });
   }, [dispatch, navigate, params]);
 

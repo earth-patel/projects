@@ -30,7 +30,7 @@ const Login = () => {
 
     const errors = validateLogin(payload);
     if (Object.keys(errors).length) {
-      dispatch(setErrors(errors));
+      dispatch(setErrors({ errors }));
       return;
     }
 
@@ -41,6 +41,10 @@ const Login = () => {
       });
   };
 
+  const resendVerificationEmail = () => {
+    // todo: implement resend verification email functionality
+  };
+
   return (
     <form onSubmit={onLogin}>
       <h2>Login</h2>
@@ -48,17 +52,23 @@ const Login = () => {
       <Notify notify={notify} />
 
       <input type="email" name="email" placeholder="Email" required />
-      <FormError error={error?.email} />
+      <FormError error={error?.errors?.email} />
       <br />
 
       <input type="password" name="password" placeholder="Password" required />
-      <FormError error={error?.password} />
+      <FormError error={error?.errors?.password} />
       <br />
 
       <button type="submit" disabled={loading}>
         {loading ? 'Logging in...' : 'Login'}
       </button>
-      <FormError error={error?.form} />
+      <FormError error={error?.errors?.form} />
+      {error?.message &&
+        error.message.toLowerCase().includes('email not verified') && (
+          <button type="button" onClick={resendVerificationEmail}>
+            Resend Verification Email
+          </button>
+        )}
 
       <p>
         Don't have an account?

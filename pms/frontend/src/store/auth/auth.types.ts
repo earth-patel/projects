@@ -1,10 +1,14 @@
-export type AuthErrors = {
+type AuthErrors = {
   firstName?: string;
   lastName?: string;
   email?: string;
   password?: string;
   form?: string;
+};
+
+export type ApiErrorResponse = {
   message?: string;
+  errors?: AuthErrors;
 };
 
 export type User = {
@@ -36,6 +40,6 @@ export type RegisterPayload = {
 export interface AuthState {
   user: User | null;
   loading: boolean;
-  error: AuthErrors | null;
+  error: ApiErrorResponse | null;
   notify: NotifyPayload | null;
 }

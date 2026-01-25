@@ -26,7 +26,7 @@ const Register = () => {
 
     const errors = validateRegister(payload);
     if (Object.keys(errors).length) {
-      dispatch(setErrors(errors));
+      dispatch(setErrors({ errors }));
       return;
     }
 
@@ -42,25 +42,25 @@ const Register = () => {
       <h2>Register</h2>
 
       <input type="text" name="firstName" placeholder="First Name" required />
-      <FormError error={error?.firstName} />
+      <FormError error={error?.errors?.firstName} />
       <br />
 
       <input type="text" name="lastName" placeholder="Last Name" required />
-      <FormError error={error?.lastName} />
+      <FormError error={error?.errors?.lastName} />
       <br />
 
       <input type="email" name="email" placeholder="Email" required />
-      <FormError error={error?.email} />
+      <FormError error={error?.errors?.email} />
       <br />
 
       <input type="password" name="password" placeholder="Password" required />
-      <FormError error={error?.password} />
+      <FormError error={error?.errors?.password} />
       <br />
 
       <button type="submit" disabled={loading}>
         {loading ? 'Registering...' : 'Register'}
       </button>
-      <FormError error={error?.form} />
+      <FormError error={error?.errors?.form} />
 
       <p>
         Already have an account?

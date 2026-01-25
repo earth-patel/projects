@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { api } from '../../api/axios';
 import type {
-  AuthErrors,
+  ApiErrorResponse,
   LoginPayload,
   RegisterPayload,
   User
@@ -12,7 +12,7 @@ import type {
 export const register = createAsyncThunk<
   { message: string }, // returned on success
   RegisterPayload, // argument
-  { rejectValue: { errors: AuthErrors } }
+  { rejectValue: ApiErrorResponse }
 >('auth/register', (data, { rejectWithValue }) => {
   return api
     .post('auth/register', data)
@@ -24,7 +24,7 @@ export const register = createAsyncThunk<
 export const login = createAsyncThunk<
   { token: string }, // returned on success
   LoginPayload, // argument
-  { rejectValue: { errors: AuthErrors } }
+  { rejectValue: ApiErrorResponse }
 >('auth/login', (data, { rejectWithValue }) => {
   return api
     .post('auth/login', data)
@@ -36,7 +36,7 @@ export const login = createAsyncThunk<
 export const fetchMe = createAsyncThunk<
   { user: User }, // returned on success
   string, // argument (token)
-  { rejectValue: { errors: AuthErrors } }
+  { rejectValue: ApiErrorResponse }
 >('auth/fetchMe', (token, { rejectWithValue }) => {
   return api
     .get('auth/me', { headers: { Authorization: `Bearer ${token}` } })
@@ -48,7 +48,7 @@ export const fetchMe = createAsyncThunk<
 export const verifyEmail = createAsyncThunk<
   { message: string }, // returned on success
   string, // argument (token)
-  { rejectValue: AuthErrors }
+  { rejectValue: ApiErrorResponse }
 >('auth/verifyEmail', (token, { rejectWithValue }) => {
   return api
     .get(`auth/verify-email?token=${token}`)
