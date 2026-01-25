@@ -8,6 +8,7 @@ import {
   createUser,
   getUserById,
   loginUser,
+  resendVerificationEmailByEmail,
   verifyEmailByToken
 } from '../services/auth.service';
 import { signJwtAccessToken } from '../services/jwt.service';
@@ -112,7 +113,7 @@ export const me = async (req: AuthRequest, res: Response) => {
 };
 
 export const verifyEmail = async (req: Request, res: Response) => {
-  const { token } = req.query;
+  const { token } = req.query as { token?: string };
 
   if (!token || typeof token !== 'string') {
     return sendErrorResponse(
@@ -137,3 +138,34 @@ export const verifyEmail = async (req: Request, res: Response) => {
     return sendErrorResponse(res);
   }
 };
+
+export const resendVerificationEmail = async (req: Request, res: Response) => {
+  const { email } = req.body as { email?: string };
+
+  if (!email) {
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Email is required')
+    )
+  }
+
+  try {
+    const result = await resendVerificationEmailByEmail(email);
+
+    if (!result) {
+      return sendErrorResponse(res, createErrorResponse(404, 'User not found'));
+    }
+
+    if (result === 'EMAIL_ALREADY_VERIFIED') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Email already verified')
+      )
+    }
+
+    return res.status(200).json({ message: 'Verification email resent successfully' });
+  } catch (error) {
+    console.error('Error resending verification email:', error);
+    return sendErrorResponse(res);
+  }
+}

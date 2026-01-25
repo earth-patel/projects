@@ -65,3 +65,23 @@ export const verifyEmailByToken = async (token: string) => {
     }
   });
 };
+
+export const resendVerificationEmailByEmail = async (email: string) => {
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+
+  if (!user) return null;
+  if (user.emailVerifiedAt) return 'EMAIL_ALREADY_VERIFIED';
+
+  const verificationCode = generateVerificationToken();
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { verificationCode }
+  });
+
+  sendVerificationEmail(user.email, verificationCode);
+
+  return true;
+};

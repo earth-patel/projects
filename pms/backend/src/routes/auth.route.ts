@@ -4,6 +4,7 @@ import {
   login,
   me,
   register,
+  resendVerificationEmail,
   verifyEmail
 } from '../controllers/auth.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
@@ -14,5 +15,6 @@ router.post('/register', register);
 router.post('/login', login);
 router.get('/me', authMiddleware, me);
 router.get('/verify-email', verifyEmail);
+router.post('/resend-verification-email', resendVerificationEmail);
 
 export default router;
