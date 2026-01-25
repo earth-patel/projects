@@ -18,6 +18,9 @@ model User {
   emailVerifiedAt  DateTime?
   verificationCode String?   @unique
 
+  resetPasswordToken     String?
+  resetPasswordExpiresAt DateTime?
+
   createdOrganizations  Organization[]
   organizationUserRoles OrganizationUserRole[]
 
