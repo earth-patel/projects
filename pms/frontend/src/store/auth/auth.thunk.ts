@@ -55,3 +55,15 @@ export const verifyEmail = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- RESEND VERIFICATION EMAIL ---------- */
+export const resendVerificationEmail = createAsyncThunk<
+  { message: string }, // returned on success
+  string, // argument (email)
+  { rejectValue: ApiErrorResponse }
+>('auth/resendVerificationEmail', (email, { rejectWithValue }) => {
+  return api
+    .post('auth/resend-verification-email', { email })
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+});

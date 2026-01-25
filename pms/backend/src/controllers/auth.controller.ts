@@ -146,7 +146,7 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
     return sendErrorResponse(
       res,
       createErrorResponse(400, 'Email is required')
-    )
+    );
   }
 
   try {
@@ -160,12 +160,14 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Email already verified')
-      )
+      );
     }
 
-    return res.status(200).json({ message: 'Verification email resent successfully' });
+    return res
+      .status(200)
+      .json({ message: 'Verification email resent successfully' });
   } catch (error) {
     console.error('Error resending verification email:', error);
     return sendErrorResponse(res);
   }
-}
+};

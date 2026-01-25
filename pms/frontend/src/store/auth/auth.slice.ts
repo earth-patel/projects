@@ -1,6 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchMe, login, register, verifyEmail } from './auth.thunk';
+import {
+  fetchMe,
+  login,
+  register,
+  resendVerificationEmail,
+  verifyEmail
+} from './auth.thunk';
 import type { ApiErrorResponse, AuthState, NotifyPayload } from './auth.types';
 
 /* ---------- HELPERS ---------- */
@@ -104,11 +110,27 @@ const authSlice = createSlice({
           type: 'success',
           message: action.payload.message
         };
+        state.error = null;
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.notify = {
           type: 'error',
           message: action.payload?.message || 'Email verification failed'
+        };
+      })
+
+      // resendVerificationEmail
+      .addCase(resendVerificationEmail.fulfilled, (state, action) => {
+        state.notify = {
+          type: 'success',
+          message: action.payload.message
+        };
+        state.error = null;
+      })
+      .addCase(resendVerificationEmail.rejected, (state, action) => {
+        state.notify = {
+          type: 'error',
+          message: action.payload?.message || 'Resend verification email failed'
         };
       });
   }

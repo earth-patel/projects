@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router';
 
 import FormError from '../components/FormError';
 import Notify from '../components/Notify';
-import { fetchMe, login } from '../store/auth/auth.thunk';
+import {
+  fetchMe,
+  login,
+  resendVerificationEmail
+} from '../store/auth/auth.thunk';
 import { clearErrors, clearNotify, setErrors } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import { validateLogin } from '../utils/common';
@@ -41,9 +45,16 @@ const Login = () => {
       });
   };
 
-  const resendVerificationEmail = () => {
-    // todo: implement resend verification email functionality
+  const handleResendVerificationEmail = () => {
+    const email = (
+      document.querySelector('input[name="email"]') as HTMLInputElement
+    )?.value;
+    if (email) dispatch(resendVerificationEmail(email));
   };
+
+  const showResendButton = error?.message
+    ?.toLowerCase()
+    .includes('email not verified');
 
   return (
     <form onSubmit={onLogin}>
@@ -63,12 +74,11 @@ const Login = () => {
         {loading ? 'Logging in...' : 'Login'}
       </button>
       <FormError error={error?.errors?.form} />
-      {error?.message &&
-        error.message.toLowerCase().includes('email not verified') && (
-          <button type="button" onClick={resendVerificationEmail}>
-            Resend Verification Email
-          </button>
-        )}
+      {showResendButton && (
+        <button type="button" onClick={handleResendVerificationEmail}>
+          Resend Verification Email
+        </button>
+      )}
 
       <p>
         Don't have an account?
