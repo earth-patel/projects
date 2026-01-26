@@ -28,6 +28,7 @@ export type User = {
 
 // PAYLOAD TYPES
 export type NotifyPayload = {
+  id: string;
   type: NotifyType;
   message: string;
 };
@@ -67,6 +68,6 @@ export interface AuthState {
   // Loading state for resend verification email action
   resendVerificationEmailLoading: boolean;
 
-  // Global notification (todo: toasts)
-  notify: NotifyPayload | null;
+  // Global notification (toasts)
+  notifyQueue: NotifyPayload[];
 }

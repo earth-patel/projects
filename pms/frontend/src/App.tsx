@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { RouterProvider } from 'react-router';
 
 import './index.css';
+import ToastContainer from './components/ToastContainer';
 import router from './routes/routes';
 import { fetchMe } from './store/auth/auth.thunk';
 import { useAppDispatch } from './store/index';
@@ -14,7 +15,12 @@ function App() {
     if (token) dispatch(fetchMe(token as string));
   }, [dispatch]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <ToastContainer />
+      <RouterProvider router={router} />
+    </>
+  );
 }
 
 export default App;

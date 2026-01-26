@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 
 import Error from '../components/Error';
 import FormInput from '../components/FormInput';
-import Notify from '../components/Notify';
 import {
   fetchMe,
   login,
@@ -18,7 +17,7 @@ const Login = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, loginError, notify, resendVerificationEmailLoading } =
+  const { loading, loginError, resendVerificationEmailLoading } =
     useAppSelector(state => state.auth);
 
   useEffect(() => {
@@ -77,8 +76,6 @@ const Login = () => {
   return (
     <>
       <h2>Login</h2>
-
-      <Notify notify={notify} />
 
       <form onSubmit={onLogin}>
         <FormInput

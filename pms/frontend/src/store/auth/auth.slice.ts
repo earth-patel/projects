@@ -32,7 +32,7 @@ const initialState: AuthState = {
   loginError: null,
   registerError: null,
   resendVerificationEmailLoading: false,
-  notify: null
+  notifyQueue: []
 };
 
 const authSlice = createSlice({
@@ -66,6 +66,9 @@ const authSlice = createSlice({
     },
     clearResetPasswordError(state) {
       state.resetPasswordError = null;
+    },
+    removeNotify(state, action: { payload: string }) {
+      state.notifyQueue = state.notifyQueue.filter(notify => notify.id !== action.payload);
     }
   },
   extraReducers: builder => {
@@ -77,10 +80,11 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.notify = {
+        state.notifyQueue.push({
+          id: crypto.randomUUID(),
           type: 'success',
           message: action.payload.message
-        };
+        });
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -118,10 +122,11 @@ const authSlice = createSlice({
 
       // verifyEmail
       .addCase(verifyEmail.fulfilled, (state, action) => {
-        state.notify = {
+        state.notifyQueue.push({
+          id: crypto.randomUUID(),
           type: 'success',
           message: action.payload.message
-        };
+        });
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.loginError = handleError(action.payload);
@@ -133,10 +138,11 @@ const authSlice = createSlice({
       })
       .addCase(resendVerificationEmail.fulfilled, (state, action) => {
         state.resendVerificationEmailLoading = false;
-        state.notify = {
+        state.notifyQueue.push({
+          id: crypto.randomUUID(),
           type: 'success',
           message: action.payload.message
-        };
+        });
       })
       .addCase(resendVerificationEmail.rejected, (state, action) => {
         state.resendVerificationEmailLoading = false;
@@ -150,10 +156,11 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.notify = {
+        state.notifyQueue.push({
+          id: crypto.randomUUID(),
           type: 'success',
           message: action.payload.message
-        };
+        });
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -163,14 +170,15 @@ const authSlice = createSlice({
       // resetPassword
       .addCase(resetPassword.pending, state => {
         state.loading = true;
-        state.notify = null;
+        state.resetPasswordError = null;
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.notify = {
+        state.notifyQueue.push({
+          id: crypto.randomUUID(),
           type: 'success',
           message: action.payload.message
-        };
+        });
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
@@ -185,6 +193,7 @@ export const {
   clearRegisterError,
   clearResetPasswordError,
   logout,
+  removeNotify,
   setForgotPasswordError,
   setLoginError,
   setRegisterError,
