@@ -2,12 +2,14 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import {
   fetchMe,
+  forgotPassword,
   login,
   register,
   resendVerificationEmail,
+  resetPassword,
   verifyEmail
 } from './auth.thunk';
-import type { ApiErrorResponse, AuthState, NotifyPayload } from './auth.types';
+import type { ApiErrorResponse, AuthState } from './auth.types';
 
 /* ---------- HELPERS ---------- */
 const fallbackError: ApiErrorResponse = {
@@ -25,7 +27,11 @@ const handleError = (payload?: ApiErrorResponse) => {
 const initialState: AuthState = {
   user: null,
   loading: false,
-  error: null,
+  resetPasswordError: null,
+  forgotPasswordError: null,
+  loginError: null,
+  registerError: null,
+  resendVerificationEmailLoading: false,
   notify: null
 };
 
@@ -36,21 +42,30 @@ const authSlice = createSlice({
     logout(state) {
       localStorage.removeItem('token');
       state.user = null;
-      state.loading = false;
-      state.notify = null;
-      state.error = null;
     },
-    setErrors(state, action: { payload: ApiErrorResponse }) {
-      state.error = action.payload;
+    setLoginError(state, action: { payload: ApiErrorResponse }) {
+      state.loginError = action.payload;
     },
-    clearErrors(state) {
-      state.error = null;
+    clearLoginError(state) {
+      state.loginError = null;
     },
-    setNotify(state, action: { payload: NotifyPayload }) {
-      state.notify = action.payload;
+    setRegisterError(state, action: { payload: ApiErrorResponse }) {
+      state.registerError = action.payload;
     },
-    clearNotify(state) {
-      state.notify = null;
+    clearRegisterError(state) {
+      state.registerError = null;
+    },
+    setForgotPasswordError(state, action: { payload: ApiErrorResponse }) {
+      state.forgotPasswordError = action.payload;
+    },
+    clearForgotPasswordError(state) {
+      state.forgotPasswordError = null;
+    },
+    setResetPasswordError(state, action: { payload: ApiErrorResponse }) {
+      state.resetPasswordError = action.payload;
+    },
+    clearResetPasswordError(state) {
+      state.resetPasswordError = null;
     }
   },
   extraReducers: builder => {
@@ -58,11 +73,10 @@ const authSlice = createSlice({
       // register
       .addCase(register.pending, state => {
         state.loading = true;
-        state.error = null;
+        state.registerError = null;
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        state.error = null;
         state.notify = {
           type: 'success',
           message: action.payload.message
@@ -70,37 +84,35 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
-        state.error = handleError(action.payload);
+        state.registerError = handleError(action.payload);
       })
 
       // login
       .addCase(login.pending, state => {
         state.loading = true;
-        state.error = null;
+        state.loginError = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         localStorage.setItem('token', action.payload.token);
-        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = handleError(action.payload);
+        state.loginError = handleError(action.payload);
       })
 
       // fetchMe
       .addCase(fetchMe.pending, state => {
         state.loading = true;
-        state.error = null;
+        state.loginError = null;
       })
       .addCase(fetchMe.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload.user;
-        state.error = null;
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.loading = false;
-        state.error = handleError(action.payload);
+        state.loginError = handleError(action.payload);
         localStorage.removeItem('token');
       })
 
@@ -110,33 +122,73 @@ const authSlice = createSlice({
           type: 'success',
           message: action.payload.message
         };
-        state.error = null;
       })
       .addCase(verifyEmail.rejected, (state, action) => {
-        state.notify = {
-          type: 'error',
-          message: action.payload?.message || 'Email verification failed'
-        };
+        state.loginError = handleError(action.payload);
       })
 
       // resendVerificationEmail
+      .addCase(resendVerificationEmail.pending, state => {
+        state.resendVerificationEmailLoading = true;
+      })
       .addCase(resendVerificationEmail.fulfilled, (state, action) => {
+        state.resendVerificationEmailLoading = false;
         state.notify = {
           type: 'success',
           message: action.payload.message
         };
-        state.error = null;
       })
       .addCase(resendVerificationEmail.rejected, (state, action) => {
+        state.resendVerificationEmailLoading = false;
+        state.loginError = handleError(action.payload);
+      })
+
+      // forgotPassword
+      .addCase(forgotPassword.pending, state => {
+        state.loading = true;
+        state.forgotPasswordError = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.loading = false;
         state.notify = {
-          type: 'error',
-          message: action.payload?.message || 'Resend verification email failed'
+          type: 'success',
+          message: action.payload.message
         };
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.forgotPasswordError = handleError(action.payload);
+      })
+
+      // resetPassword
+      .addCase(resetPassword.pending, state => {
+        state.loading = true;
+        state.notify = null;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.notify = {
+          type: 'success',
+          message: action.payload.message
+        };
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.resetPasswordError = handleError(action.payload);
       });
   }
 });
 
-export const { clearErrors, clearNotify, logout, setErrors, setNotify } =
-  authSlice.actions;
+export const {
+  clearForgotPasswordError,
+  clearLoginError,
+  clearRegisterError,
+  clearResetPasswordError,
+  logout,
+  setForgotPasswordError,
+  setLoginError,
+  setRegisterError,
+  setResetPasswordError
+} = authSlice.actions;
 
 export default authSlice.reducer;

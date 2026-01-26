@@ -1,20 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
-import FormError from '../components/FormError';
+import Error from '../components/Error';
+import FormInput from '../components/FormInput';
 import { register } from '../store/auth/auth.thunk';
-import { clearErrors, setErrors } from '../store/auth/auth.slice';
+import { clearRegisterError, setRegisterError } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import { validateRegister } from '../utils/common';
 
 const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, loading } = useAppSelector(state => state.auth);
+  const { registerError, loading } = useAppSelector(state => state.auth);
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearRegisterError());
+    };
+  }, [dispatch]);
 
   const onRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(clearErrors());
 
     const formData = new FormData(e.currentTarget);
     const payload = {
@@ -26,7 +32,7 @@ const Register = () => {
 
     const errors = validateRegister(payload);
     if (Object.keys(errors).length) {
-      dispatch(setErrors({ errors }));
+      dispatch(setRegisterError({ errors }));
       return;
     }
 
@@ -38,43 +44,64 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={onRegister}>
+    <>
       <h2>Register</h2>
 
-      <input type="text" name="firstName" placeholder="First Name" required />
-      <FormError error={error?.errors?.firstName} />
-      <br />
+      <form onSubmit={onRegister}>
+        <FormInput
+          type="text"
+          name="firstName"
+          placeholder="First Name"
+          error={registerError?.errors?.firstName}
+          required
+        />
+        <br />
 
-      <input type="text" name="lastName" placeholder="Last Name" required />
-      <FormError error={error?.errors?.lastName} />
-      <br />
+        <FormInput
+          type="text"
+          name="lastName"
+          placeholder="Last Name"
+          error={registerError?.errors?.lastName}
+          required
+        />
+        <br />
 
-      <input type="email" name="email" placeholder="Email" required />
-      <FormError error={error?.errors?.email} />
-      <br />
+        <FormInput
+          type="email"
+          name="email"
+          placeholder="Email"
+          error={registerError?.errors?.email}
+          required
+        />
+        <br />
 
-      <input type="password" name="password" placeholder="Password" required />
-      <FormError error={error?.errors?.password} />
-      <br />
+        <FormInput
+          type="password"
+          name="password"
+          placeholder="Password"
+          error={registerError?.errors?.password}
+          required
+        />
+        <br />
 
-      <button type="submit" disabled={loading}>
-        {loading ? 'Registering...' : 'Register'}
-      </button>
-      <FormError error={error?.errors?.form} />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Registering...' : 'Register'}
+        </button>
+        <Error error={registerError?.errors?.form} />
+      </form>
 
       <p>
         Already have an account?
         <button
           type="button"
           onClick={() => {
-            dispatch(clearErrors());
             navigate('/login');
           }}
         >
           Login
         </button>
       </p>
-    </form>
+    </>
   );
 };
 

@@ -9,13 +9,15 @@ const Profile = () => {
   if (loading || !user) return <Loading />;
 
   return (
-    <div>
+    <>
       <h2>Profile</h2>
-      <p>First Name: {user.firstName}</p>
-      <p>Last Name: {user.lastName}</p>
-      <p>Email: {user.email}</p>
-      <button onClick={() => dispatch(logout())}>Logout</button>
-    </div>
+      <div>
+        <p>First Name: {user.firstName}</p>
+        <p>Last Name: {user.lastName}</p>
+        <p>Email: {user.email}</p>
+        <button onClick={() => dispatch(logout())}>Logout</button>
+      </div>
+    </>
   );
 };
 

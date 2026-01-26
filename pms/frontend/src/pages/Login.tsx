@@ -1,40 +1,54 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import FormError from '../components/FormError';
+import Error from '../components/Error';
+import FormInput from '../components/FormInput';
 import Notify from '../components/Notify';
 import {
   fetchMe,
   login,
   resendVerificationEmail
 } from '../store/auth/auth.thunk';
-import { clearErrors, clearNotify, setErrors } from '../store/auth/auth.slice';
+import { setLoginError, clearLoginError } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import { validateLogin } from '../utils/common';
 
 const Login = () => {
+  const emailRef = useRef<HTMLInputElement>(null);
+  const [resendTimer, setResendTimer] = useState(0);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { error, loading, notify } = useAppSelector(state => state.auth);
+  const { loading, loginError, notify, resendVerificationEmailLoading } =
+    useAppSelector(state => state.auth);
 
-  const resetUiState = () => {
-    dispatch(clearErrors());
-    dispatch(clearNotify());
-  };
+  useEffect(() => {
+    return () => {
+      dispatch(clearLoginError());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!resendTimer) return;
+
+    const interval = setInterval(() => {
+      setResendTimer(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [resendTimer]);
 
   const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    resetUiState();
 
     const formData = new FormData(e.currentTarget);
     const payload = {
-      email: String(formData.get('email')),
-      password: String(formData.get('password'))
+      email: formData.get('email') as string,
+      password: formData.get('password') as string
     };
 
     const errors = validateLogin(payload);
     if (Object.keys(errors).length) {
-      dispatch(setErrors({ errors }));
+      dispatch(setLoginError({ errors }));
       return;
     }
 
@@ -46,53 +60,76 @@ const Login = () => {
   };
 
   const handleResendVerificationEmail = () => {
-    const email = (
-      document.querySelector('input[name="email"]') as HTMLInputElement
-    )?.value;
-    if (email) dispatch(resendVerificationEmail(email));
+    const email = emailRef.current?.value;
+
+    if (!email) {
+      dispatch(setLoginError({ errors: { form: 'Email is required' } }));
+      return;
+    }
+    dispatch(resendVerificationEmail(email));
+    setResendTimer(60); // 60 seconds cooldown
   };
 
-  const showResendButton = error?.message
+  const showResendButton = loginError?.message
     ?.toLowerCase()
     .includes('email not verified');
 
   return (
-    <form onSubmit={onLogin}>
+    <>
       <h2>Login</h2>
 
       <Notify notify={notify} />
 
-      <input type="email" name="email" placeholder="Email" required />
-      <FormError error={error?.errors?.email} />
-      <br />
+      <form onSubmit={onLogin}>
+        <FormInput
+          ref={emailRef}
+          type="email"
+          name="email"
+          placeholder="Email"
+          error={loginError?.errors?.email}
+          required
+        />
+        <br />
 
-      <input type="password" name="password" placeholder="Password" required />
-      <FormError error={error?.errors?.password} />
-      <br />
+        <FormInput
+          type="password"
+          name="password"
+          placeholder="Password"
+          error={loginError?.errors?.password}
+          required
+        />
+        <br />
 
-      <button type="submit" disabled={loading}>
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
-      <FormError error={error?.errors?.form} />
-      {showResendButton && (
-        <button type="button" onClick={handleResendVerificationEmail}>
-          Resend Verification Email
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
         </button>
-      )}
+        <button type="button" onClick={() => navigate('/forgot-password')}>
+          Forgot Password
+        </button>
+
+        <Error error={loginError?.errors?.form} />
+        {showResendButton && (
+          <button
+            type="button"
+            onClick={handleResendVerificationEmail}
+            disabled={resendVerificationEmailLoading || resendTimer > 0}
+          >
+            {resendTimer > 0
+              ? `Resend in ${resendTimer}s`
+              : resendVerificationEmailLoading
+                ? 'Sending...'
+                : 'Resend Email'}
+          </button>
+        )}
+      </form>
 
       <p>
         Don't have an account?
-        <button
-          type="button"
-          onClick={() => {
-            resetUiState();
-            navigate('/register');
-          }}
-        >
+        <button type="button" onClick={() => navigate('/register')}>
           Register
         </button>
       </p>
-    </form>
+    </>
   );
 };
 

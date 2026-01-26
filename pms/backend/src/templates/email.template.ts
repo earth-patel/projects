@@ -13,3 +13,18 @@ export const sendVerificationEmail = async (to: string, token: string) => {
     `
   });
 };
+
+export const sendResetPasswordEmail = async (to: string, token: string) => {
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+  return sendEmail({
+    to,
+    subject: 'Reset your password',
+    html: `
+      <h2>Password Reset</h2>
+      <p>Click the link below to reset your password:</p>
+      <a href='${resetUrl}'>${resetUrl}</a>
+      <p>This link will expire in 15 minutes.</p>  
+    `
+  });
+};

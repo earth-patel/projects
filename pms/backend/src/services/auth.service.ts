@@ -1,11 +1,16 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 import { RegisterDto } from '../dtos/auth.dto';
 import prisma from '../prisma';
-import { sendVerificationEmail } from '../templates/email.template';
+import {
+  sendResetPasswordEmail,
+  sendVerificationEmail
+} from '../templates/email.template';
 import { generateToken } from '../utils/token.util';
 
 const SALT_ROUNDS = 10;
+const RESET_TOKEN_EXPIRY_MIN = 15;
 
 export const createUser = async (data: RegisterDto) => {
   const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
@@ -24,18 +29,14 @@ export const createUser = async (data: RegisterDto) => {
   return user;
 };
 
-export const loginUser = async (email: string) => {
-  return prisma.user.findUnique({
-    where: { email },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      emailVerifiedAt: true,
-      password: true // intentionally included for comparison
-    }
-  });
+export const validateLogin = async (email: string, password: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return null;
+
+  const isValid = await bcrypt.compare(password, user.password);
+  if (!isValid) return null;
+
+  return user;
 };
 
 export const getUserById = async (userId: number) => {
@@ -82,6 +83,62 @@ export const resendVerificationEmailByEmail = async (email: string) => {
   });
 
   sendVerificationEmail(user.email, verificationCode);
+
+  return true;
+};
+
+export const forgotPasswordByEmail = async (email: string) => {
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) return null;
+
+  const rawToken = generateToken();
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(rawToken)
+    .digest('hex');
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      resetPasswordToken: hashedToken,
+      resetPasswordExpiresAt: new Date(
+        Date.now() + RESET_TOKEN_EXPIRY_MIN * 60 * 1000
+      )
+    }
+  });
+
+  sendResetPasswordEmail(email, rawToken);
+
+  return true;
+};
+
+export const resetPasswordByToken = async (
+  token: string,
+  newPassword: string
+) => {
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await prisma.user.findFirst({
+    where: {
+      resetPasswordToken: hashedToken,
+      resetPasswordExpiresAt: {
+        gt: new Date()
+      }
+    }
+  });
+
+  if (!user) return null;
+
+  const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpiresAt: null
+    }
+  });
 
   return true;
 };

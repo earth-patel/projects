@@ -1,14 +1,15 @@
 import type { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 
 import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { AuthRequest } from '../middleware/auth.middleware';
 import {
   createUser,
+  forgotPasswordByEmail,
   getUserById,
-  loginUser,
   resendVerificationEmailByEmail,
+  resetPasswordByToken,
+  validateLogin,
   verifyEmailByToken
 } from '../services/auth.service';
 import { signJwtAccessToken } from '../services/jwt.service';
@@ -21,20 +22,6 @@ import {
 /* ---------- CONSTANTS ---------- */
 const VALIDATION_FAILED = (errors: Record<string, string>) =>
   createErrorResponse(400, 'Validation failed', errors);
-
-const INVALID_CREDENTIALS = createErrorResponse(
-  401,
-  'Invalid email or password',
-  { form: 'Invalid email or password' }
-);
-
-const EMAIL_ALREADY_EXISTS = createErrorResponse(400, 'Email already in use', {
-  email: 'Email already in use'
-});
-
-const USER_NOT_FOUND = createErrorResponse(401, 'User not found', {
-  form: 'User not found'
-});
 
 /* ---------- CONTROLLERS ---------- */
 export const register = async (req: Request, res: Response) => {
@@ -57,7 +44,12 @@ export const register = async (req: Request, res: Response) => {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2002'
     ) {
-      return sendErrorResponse(res, EMAIL_ALREADY_EXISTS);
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Email already in use', {
+          email: 'Email already in use'
+        })
+      );
     }
 
     console.error('Error registering user:', error);
@@ -74,10 +66,14 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
-    const user = await loginUser(data.email);
-    if (!user) return sendErrorResponse(res, INVALID_CREDENTIALS);
-    const isPasswordValid = await bcrypt.compare(data.password, user.password);
-    if (!isPasswordValid) return sendErrorResponse(res, INVALID_CREDENTIALS);
+    const user = await validateLogin(data.email, data.password);
+    if (!user)
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'Invalid email or password', {
+          form: 'Invalid email or password'
+        })
+      );
 
     if (!user.emailVerifiedAt) {
       return sendErrorResponse(
@@ -102,7 +98,12 @@ export const me = async (req: AuthRequest, res: Response) => {
     const user = await getUserById(req.user.userId);
 
     if (!user) {
-      return sendErrorResponse(res, USER_NOT_FOUND);
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'User not found', {
+          form: 'User not found'
+        })
+      );
     }
 
     return res.status(200).json({ user });
@@ -115,22 +116,25 @@ export const me = async (req: AuthRequest, res: Response) => {
 export const verifyEmail = async (req: Request, res: Response) => {
   const { token } = req.query as { token?: string };
 
-  if (!token || typeof token !== 'string') {
+  if (!token) {
     return sendErrorResponse(
       res,
-      createErrorResponse(400, 'Invalid or missing token')
+      createErrorResponse(400, 'Invalid or missing token', {
+        form: 'Invalid or missing token'
+      })
     );
   }
 
   try {
     const user = await verifyEmailByToken(token);
 
-    if (!user) {
+    if (!user)
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Invalid or expired token')
+        createErrorResponse(400, 'Invalid or expired token', {
+          form: 'Invalid or expired token'
+        })
       );
-    }
 
     return res.status(200).json({ message: 'Email verified successfully' });
   } catch (error) {
@@ -142,24 +146,31 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const resendVerificationEmail = async (req: Request, res: Response) => {
   const { email } = req.body as { email?: string };
 
-  if (!email) {
+  if (!email)
     return sendErrorResponse(
       res,
-      createErrorResponse(400, 'Email is required')
+      createErrorResponse(400, 'Email is required', {
+        email: 'Email is required'
+      })
     );
-  }
 
   try {
     const result = await resendVerificationEmailByEmail(email);
 
-    if (!result) {
-      return sendErrorResponse(res, createErrorResponse(404, 'User not found'));
-    }
+    if (!result)
+      return sendErrorResponse(
+        res,
+        createErrorResponse(404, 'Account not found', {
+          email: 'Account not found'
+        })
+      );
 
     if (result === 'EMAIL_ALREADY_VERIFIED') {
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Email already verified')
+        createErrorResponse(400, 'Email already verified', {
+          email: 'Email already verified'
+        })
       );
     }
 
@@ -168,6 +179,71 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
       .json({ message: 'Verification email resent successfully' });
   } catch (error) {
     console.error('Error resending verification email:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const { email } = req.body as { email?: string };
+
+  if (!email)
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Email is required', {
+        email: 'Email is required'
+      })
+    );
+
+  try {
+    const result = await forgotPasswordByEmail(email);
+
+    if (!result)
+      return sendErrorResponse(
+        res,
+        createErrorResponse(404, 'Account not found', {
+          email: 'Account not found'
+        })
+      );
+
+    return res
+      .status(200)
+      .json({ message: 'A reset link has been sent to your email address' });
+  } catch (error) {
+    console.error('Error processing forgot password:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { token, password } = req.body as {
+    token?: string;
+    password?: string;
+  };
+
+  if (!token || !password) {
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Token and password are required', {
+        form: 'Token and password are required'
+      })
+    );
+  }
+
+  try {
+    const result = await resetPasswordByToken(token, password);
+
+    if (!result) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Invalid or expired token', {
+          form: 'Invalid or expired token'
+        })
+      );
+    }
+
+    return res.status(200).json({ message: 'Password reset successful' });
+  } catch (error) {
+    console.error('Error resetting password:', error);
     return sendErrorResponse(res);
   }
 };

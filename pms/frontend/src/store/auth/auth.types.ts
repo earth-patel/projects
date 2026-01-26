@@ -1,16 +1,24 @@
+// FIELD-LEVEL AUTH VALIDATION ERRORS
 type AuthErrors = {
   firstName?: string;
   lastName?: string;
   email?: string;
   password?: string;
+
+  // Generic form-level error
   form?: string;
 };
 
+// NOTIFICATION TYPES
+type NotifyType = 'success' | 'error' | 'warning' | 'info';
+
+// API ERROR RESPONSE STRUCTURE
 export type ApiErrorResponse = {
   message?: string;
   errors?: AuthErrors;
 };
 
+// USER TYPE (Returned from `/auth/me` endpoint)
 export type User = {
   id: number;
   firstName: string;
@@ -18,8 +26,7 @@ export type User = {
   email: string;
 };
 
-export type NotifyType = 'success' | 'error' | 'warning' | 'info';
-
+// PAYLOAD TYPES
 export type NotifyPayload = {
   type: NotifyType;
   message: string;
@@ -37,9 +44,29 @@ export type RegisterPayload = {
   password: string;
 };
 
+// AUTH STATE INTERFACE
 export interface AuthState {
+  // Logged-in user (null if unauthenticated)
   user: User | null;
+
+  // Global loading state
   loading: boolean;
-  error: ApiErrorResponse | null;
+
+  // Errors specific to reset password flow
+  resetPasswordError: ApiErrorResponse | null;
+
+  // Errors specific to forgot password flow
+  forgotPasswordError: ApiErrorResponse | null;
+
+  // Errors from login attempts
+  loginError: ApiErrorResponse | null;
+
+  // Errors from registration attempts
+  registerError: ApiErrorResponse | null;
+
+  // Loading state for resend verification email action
+  resendVerificationEmailLoading: boolean;
+
+  // Global notification (todo: toasts)
   notify: NotifyPayload | null;
 }
