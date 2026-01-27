@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 import { removeNotify } from '../store/auth/auth.slice';
-import { useAppDispatch, useAppSelector  } from '../store/index';
+import { useAppDispatch, useAppSelector } from '../store/index';
 
 const toastRoot = document.getElementById('toast-root') as HTMLElement;
 const TOAST_DURATION = 5000; // Duration in milliseconds
@@ -22,7 +22,7 @@ const ToastContainer = () => {
 
     return () => {
       timers.forEach(clearTimeout);
-    }
+    };
   }, [toasts, dispatch]);
 
   if (!toastRoot || !toasts.length) return null;

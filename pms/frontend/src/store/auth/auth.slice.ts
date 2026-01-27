@@ -68,7 +68,9 @@ const authSlice = createSlice({
       state.resetPasswordError = null;
     },
     removeNotify(state, action: { payload: string }) {
-      state.notifyQueue = state.notifyQueue.filter(notify => notify.id !== action.payload);
+      state.notifyQueue = state.notifyQueue.filter(
+        notify => notify.id !== action.payload
+      );
     }
   },
   extraReducers: builder => {
