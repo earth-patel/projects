@@ -12,7 +12,8 @@ type Errors<T> = Partial<Record<keyof T, string>>;
 
 const validatePassword = (password: string) => {
   if (!password) return 'Password is required';
-  if (password.length <= 8) return 'Password must be at least 8 characters long';
+  if (password.length <= 8)
+    return 'Password must be at least 8 characters long';
 };
 
 export const validateLogin = (data: LoginPayload) => {
