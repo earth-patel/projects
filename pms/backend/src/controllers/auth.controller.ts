@@ -136,7 +136,7 @@ export const verifyEmail = async (req: Request, res: Response) => {
         })
       );
 
-    return res.status(200).json({ message: 'Email verified successfully' });
+    return res.status(200).json({ message: 'Email verified successfully.' });
   } catch (error) {
     console.error('Error verifying email:', error);
     return sendErrorResponse(res);
@@ -176,7 +176,7 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .json({ message: 'Verification email resent successfully' });
+      .json({ message: 'Verification email resent successfully.' });
   } catch (error) {
     console.error('Error resending verification email:', error);
     return sendErrorResponse(res);
@@ -207,7 +207,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
     return res
       .status(200)
-      .json({ message: 'A reset link has been sent to your email address' });
+      .json({ message: 'A reset link has been sent to your email address.' });
   } catch (error) {
     console.error('Error processing forgot password:', error);
     return sendErrorResponse(res);
@@ -241,7 +241,7 @@ export const resetPassword = async (req: Request, res: Response) => {
       );
     }
 
-    return res.status(200).json({ message: 'Password reset successful' });
+    return res.status(200).json({ message: 'Password reset successful.' });
   } catch (error) {
     console.error('Error resetting password:', error);
     return sendErrorResponse(res);
