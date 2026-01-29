@@ -1,12 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { api } from '../../api/axios';
-import type {
-  ApiErrorResponse,
-  LoginPayload,
-  RegisterPayload,
-  User
-} from './auth.types';
+import { type ApiErrorResponse } from './auth.types';
+import {
+  type LoginPayload,
+  type RegisterPayload,
+  type User
+} from '../../types/auth.domain';
 
 /* ---------- REGISTER ---------- */
 export const register = createAsyncThunk<

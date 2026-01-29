@@ -4,9 +4,9 @@ import { LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import { AuthRequest } from '../middleware/auth.middleware';
 import {
-  createUser,
   forgotPasswordByEmail,
   getUserById,
+  registerUserWithOrganization,
   resendVerificationEmailByEmail,
   resetPasswordByToken,
   validateLogin,
@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response) => {
   }
 
   try {
-    await createUser(data);
+    await registerUserWithOrganization(data);
     return res.status(201).json({
       message:
         'Registration successful. Please check your email to verify your account.'

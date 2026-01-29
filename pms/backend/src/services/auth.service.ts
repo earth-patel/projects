@@ -12,21 +12,53 @@ import { generateToken } from '../utils/token.util';
 const SALT_ROUNDS = 10;
 const RESET_TOKEN_EXPIRY_MIN = 15;
 
-export const createUser = async (data: RegisterDto) => {
+export const registerUserWithOrganization = async (data: RegisterDto) => {
   const hashedPassword = await bcrypt.hash(data.password, SALT_ROUNDS);
   const verificationCode = generateToken();
 
-  const user = await prisma.user.create({
-    data: {
-      ...data,
-      password: hashedPassword,
-      verificationCode
+  return prisma.$transaction(async tx => {
+    // create user
+    const user = await tx.user.create({
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: hashedPassword,
+        verificationCode
+      }
+    });
+
+    // create organization
+    const organization = await tx.organization.create({
+      data: {
+        name: data.organizationName,
+        createdById: user.id
+      }
+    });
+
+    // get owner role
+    const ownerRole = await tx.role.findFirst({
+      where: { name: 'OWNER' }
+    });
+
+    if (!ownerRole) {
+      throw new Error('Owner role not found. Please seed roles first.');
     }
+
+    // assign user to organization with owner role
+    await tx.organizationUserRole.create({
+      data: {
+        userId: user.id,
+        organizationId: organization.id,
+        roleId: ownerRole.id
+      }
+    });
+
+    // send verification email
+    sendVerificationEmail(user.email, verificationCode);
+
+    return user;
   });
-
-  sendVerificationEmail(user.email, verificationCode);
-
-  return user;
 };
 
 export const validateLogin = async (email: string, password: string) => {

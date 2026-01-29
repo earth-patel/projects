@@ -24,10 +24,11 @@ const Register = () => {
 
     const formData = new FormData(e.currentTarget);
     const payload = {
-      firstName: String(formData.get('firstName')),
-      lastName: String(formData.get('lastName')),
-      email: String(formData.get('email')),
-      password: String(formData.get('password'))
+      firstName: formData.get('firstName') as string,
+      lastName: formData.get('lastName') as string,
+      organizationName: formData.get('organizationName') as string,
+      email: formData.get('email') as string,
+      password: formData.get('password') as string
     };
 
     const errors = validateRegister(payload);
@@ -62,6 +63,15 @@ const Register = () => {
           name="lastName"
           placeholder="Last Name"
           error={registerError?.errors?.lastName}
+          required
+        />
+        <br />
+
+        <FormInput
+          type="text"
+          name="organizationName"
+          placeholder="Organization Name"
+          error={registerError?.errors?.organizationName}
           required
         />
         <br />

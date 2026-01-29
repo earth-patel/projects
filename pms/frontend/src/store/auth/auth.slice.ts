@@ -9,7 +9,7 @@ import {
   resetPassword,
   verifyEmail
 } from './auth.thunk';
-import type { ApiErrorResponse, AuthState } from './auth.types';
+import { type ApiErrorResponse, type AuthState } from './auth.types';
 
 /* ---------- HELPERS ---------- */
 const fallbackError: ApiErrorResponse = {

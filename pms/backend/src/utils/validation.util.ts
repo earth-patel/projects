@@ -30,6 +30,8 @@ export const validateRegisterDto = (data: RegisterDto) => {
 
   if (!data.firstName) errors.firstName = 'First name is required';
   if (!data.lastName) errors.lastName = 'Last name is required';
+  if (!data.organizationName)
+    errors.organizationName = 'Organization name is required';
 
   const emailError = validateEmail(data.email);
   if (emailError) errors.email = emailError;
