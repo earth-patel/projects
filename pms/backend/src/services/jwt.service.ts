@@ -1,9 +1,6 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
 
-export interface JwtPayload {
-  userId: number;
-  email: string;
-}
+import { JwtPayload } from '../dtos/auth.dto';
 
 const getJwtConfig = () => {
   const secret = process.env.JWT_SECRET;

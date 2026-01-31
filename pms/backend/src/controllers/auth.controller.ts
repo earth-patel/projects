@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express';
 
-import { LoginDto, RegisterDto } from '../dtos/auth.dto';
+import { AuthRequest, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
-import { AuthRequest } from '../middleware/auth.middleware';
 import {
   forgotPasswordByEmail,
-  getUserById,
+  getUserWithOrganizations,
   registerUserWithOrganization,
   resendVerificationEmailByEmail,
   resetPasswordByToken,
@@ -95,7 +94,18 @@ export const login = async (req: Request, res: Response) => {
 
 export const me = async (req: AuthRequest, res: Response) => {
   try {
-    const user = await getUserById(req.user.userId);
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(401, 'Unauthorized', {
+          form: 'Unauthorized access. Please try logging in again'
+        })
+      );
+    }
+
+    const user = await getUserWithOrganizations(userId);
 
     if (!user) {
       return sendErrorResponse(
@@ -106,7 +116,22 @@ export const me = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    return res.status(200).json({ user });
+    const organizations = user.organizationUserRoles.map(item => ({
+      organizationId: item.organization.id,
+      organizationName: item.organization.name,
+      role: item.role.name
+    }));
+
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      },
+      organizations,
+      activeOrganizationId: organizations[0]?.organizationId || null
+    });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return sendErrorResponse(res);

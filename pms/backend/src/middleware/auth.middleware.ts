@@ -1,11 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Response } from 'express';
 
-import { JwtPayload, verifyJwtAccessToken } from '../services/jwt.service';
+import { AuthRequest } from '../dtos/auth.dto';
+import { verifyJwtAccessToken } from '../services/jwt.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
-
-export interface AuthRequest extends Request {
-  user?: JwtPayload;
-}
 
 export const authMiddleware = (
   req: AuthRequest,
