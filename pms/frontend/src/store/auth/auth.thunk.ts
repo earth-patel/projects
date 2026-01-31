@@ -5,7 +5,7 @@ import { type ApiErrorResponse } from './auth.types';
 import {
   type LoginPayload,
   type RegisterPayload,
-  type User
+  type MeResponse
 } from '../../types/auth.domain';
 
 /* ---------- REGISTER ---------- */
@@ -44,7 +44,7 @@ export const login = createAsyncThunk<
 
 /* ---------- FETCH ME ---------- */
 export const fetchMe = createAsyncThunk<
-  { user: User }, // returned on success
+  MeResponse, // returned on success
   string, // argument (token)
   { rejectValue: ApiErrorResponse }
 >('auth/fetchMe', (token, { rejectWithValue }) => {
