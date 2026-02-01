@@ -7,12 +7,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import authReducer from './auth/auth.slice';
 import notificationReducer from './notification/notification.slice';
+import organizationReducer from './organization/organization.slice';
 
 /* ---------- STORE ---------- */
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    notification: notificationReducer
+    notification: notificationReducer,
+    organization: organizationReducer
   }
 });
 

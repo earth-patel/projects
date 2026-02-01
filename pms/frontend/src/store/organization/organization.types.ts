@@ -3,3 +3,8 @@ export type Organization = {
   organizationName: string;
   role: string;
 };
+
+export type OrganizationState = {
+  organizations: Organization[];
+  activeOrganization: Organization | null;
+};

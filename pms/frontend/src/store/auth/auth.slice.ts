@@ -40,9 +40,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout(state) {
+    logout() {
       localStorage.removeItem('token');
-      state.user = null;
+      return initialState;
     },
     setLoginError(state, action: { payload: ApiErrorResponse }) {
       state.loginError = action.payload;
