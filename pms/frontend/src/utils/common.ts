@@ -1,4 +1,13 @@
-import { type LoginPayload, type RegisterPayload } from '../types/auth.domain';
+export type LoginPayload = {
+  email: string;
+  password: string;
+};
+
+export type RegisterPayload = LoginPayload & {
+  firstName: string;
+  lastName: string;
+  organizationName: string;
+};
 
 type Errors<T> = Partial<Record<keyof T, string>>;
 

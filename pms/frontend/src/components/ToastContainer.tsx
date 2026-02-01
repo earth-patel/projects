@@ -1,22 +1,22 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-import { removeNotify } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
+import { removeNotification } from '../store/notification/notification.slice';
 
 const toastRoot = document.getElementById('toast-root') as HTMLElement;
 const TOAST_DURATION = 5000; // Duration in milliseconds
 
 const ToastContainer = () => {
   const dispatch = useAppDispatch();
-  const toasts = useAppSelector(state => state.auth.notifyQueue);
+  const toasts = useAppSelector(state => state.notification.notificationQueue);
 
   useEffect(() => {
     if (!toasts.length) return;
 
     const timers = toasts.map(toast =>
       setTimeout(() => {
-        dispatch(removeNotify(toast.id));
+        dispatch(removeNotification(toast.id));
       }, TOAST_DURATION)
     );
 
