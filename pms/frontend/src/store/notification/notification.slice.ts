@@ -1,6 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { type NotificationState, type NotificationType } from './notification.types';
+import {
+  type NotificationState,
+  type NotificationType
+} from './notification.types';
 
 /* ---------- INITIAL STATE ---------- */
 const initialState: NotificationState = {
@@ -11,12 +14,15 @@ const notificationSlice = createSlice({
   name: 'notification',
   initialState,
   reducers: {
-    pushNotification(state, action: {
-      payload: {
-        type: NotificationType;
-        message: string;
+    pushNotification(
+      state,
+      action: {
+        payload: {
+          type: NotificationType;
+          message: string;
+        };
       }
-    }) {
+    ) {
       state.notificationQueue.push({
         id: crypto.randomUUID(),
         type: action.payload.type,
@@ -31,6 +37,7 @@ const notificationSlice = createSlice({
   }
 });
 
-export const { pushNotification, removeNotification } = notificationSlice.actions;
+export const { pushNotification, removeNotification } =
+  notificationSlice.actions;
 
 export default notificationSlice.reducer;
