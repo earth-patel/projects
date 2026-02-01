@@ -86,7 +86,6 @@ const Login = () => {
           error={loginError?.errors?.email}
           required
         />
-        <br />
 
         <FormInput
           type="password"
@@ -95,14 +94,15 @@ const Login = () => {
           error={loginError?.errors?.password}
           required
         />
-        <br />
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
-        <button type="button" onClick={() => navigate('/forgot-password')}>
-          Forgot Password
-        </button>
+        <div className="form-actions">
+          <button type="submit" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+          <button type="button" onClick={() => navigate('/forgot-password')}>
+            Forgot Password
+          </button>
+        </div>
 
         <Error error={loginError?.errors?.form} />
         {showResendButton && (
@@ -120,7 +120,7 @@ const Login = () => {
         )}
       </form>
 
-      <p>
+      <p className="form-footer">
         Don't have an account?
         <button type="button" onClick={() => navigate('/register')}>
           Register

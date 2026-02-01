@@ -3,7 +3,7 @@ type ErrorProps = {
 };
 
 const Error = ({ error }: ErrorProps) => {
-  if (!error) return <br />;
+  if (!error) return null;
   return <div className="error">{error}</div>;
 };
 

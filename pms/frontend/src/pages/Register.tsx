@@ -56,7 +56,6 @@ const Register = () => {
           error={registerError?.errors?.firstName}
           required
         />
-        <br />
 
         <FormInput
           type="text"
@@ -65,7 +64,6 @@ const Register = () => {
           error={registerError?.errors?.lastName}
           required
         />
-        <br />
 
         <FormInput
           type="text"
@@ -74,7 +72,6 @@ const Register = () => {
           error={registerError?.errors?.organizationName}
           required
         />
-        <br />
 
         <FormInput
           type="email"
@@ -83,7 +80,6 @@ const Register = () => {
           error={registerError?.errors?.email}
           required
         />
-        <br />
 
         <FormInput
           type="password"
@@ -92,7 +88,6 @@ const Register = () => {
           error={registerError?.errors?.password}
           required
         />
-        <br />
 
         <button type="submit" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
@@ -100,7 +95,7 @@ const Register = () => {
         <Error error={registerError?.errors?.form} />
       </form>
 
-      <p>
+      <p className="form-footer">
         Already have an account?
         <button
           type="button"

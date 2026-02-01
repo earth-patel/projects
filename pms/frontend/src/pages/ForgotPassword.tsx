@@ -45,9 +45,15 @@ const ForgotPassword = () => {
       <form onSubmit={onSubmit}>
         <input type="email" name="email" placeholder="Email" required />
         <Error error={forgotPasswordError?.errors?.email} />
-        <button type="submit" disabled={loading}>
-          Send Reset Link
-        </button>
+
+        <div className="form-actions">
+          <button type="button" onClick={() => navigate(-1)}>
+            Back
+          </button>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Sending...' : 'Send Reset Link'}
+          </button>
+        </div>
       </form>
     </>
   );

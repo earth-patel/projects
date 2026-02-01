@@ -1,9 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
+import Dashboard from '../pages/Dashboard';
 import ForgotPassword from '../pages/ForgotPassword';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
-import Profile from '../pages/Profile';
 import Register from '../pages/Register';
 import ResetPassword from '../pages/ResetPassword';
 import VerifyEmail from '../pages/VerifyEmail';
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
   // Protected Routes
   {
     element: <ProtectedRoutes />,
-    children: [{ path: '/profile', element: <Profile /> }]
+    children: [{ path: '/dashboard', element: <Dashboard /> }]
   },
   // Fallback Route
   {

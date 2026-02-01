@@ -5,7 +5,7 @@ import { useAppSelector } from '../store';
 const PublicRoutes = () => {
   const { user } = useAppSelector(state => state.auth);
 
-  if (user) return <Navigate to="/profile" replace />;
+  if (user) return <Navigate to="/dashboard" replace />;
 
   return <Outlet />;
 };
