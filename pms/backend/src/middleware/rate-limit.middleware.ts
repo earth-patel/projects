@@ -2,13 +2,13 @@ import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
 
 /* ---------- LOGIN REQUESTS ---------- */
 export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 10, // limit each IP to 10 requests per windowMs
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 20, // limit each IP to 20 requests per windowMs
   keyGenerator: req => {
     return req.body.email || ipKeyGenerator(req.ip);
   },
   message: {
-    message: 'Too many login attempts. Try again after 15 minutes.'
+    message: 'Too many login attempts. Try again after 5 minutes.'
   }
 });
 

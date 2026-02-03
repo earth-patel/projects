@@ -1,40 +1,43 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { useAppDispatch, useAppSelector } from '../store/index';
-import { removeNotification } from '../store/notification/notification.slice';
+import { toast, type ToastPayload } from '../utils/toast';
 
 const toastRoot = document.getElementById('toast-root') as HTMLElement;
-const TOAST_DURATION = 5000; // Duration in milliseconds
+const TOAST_DURATION = 15000; // Duration in milliseconds
 
 const ToastContainer = () => {
-  const dispatch = useAppDispatch();
-  const toasts = useAppSelector(state => state.notification.notificationQueue);
+  const [toasts, setToasts] = useState<ToastPayload[]>([]);
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   useEffect(() => {
-    if (!toasts.length) return;
+    const unsubscribe = toast.subscribe(newToast => {
+      setToasts(prev => [...prev, newToast]);
 
-    const timers = toasts.map(toast =>
       setTimeout(() => {
-        dispatch(removeNotification(toast.id));
-      }, TOAST_DURATION)
-    );
+        removeToast(newToast.id);
+      }, TOAST_DURATION);
+    });
 
-    return () => {
-      timers.forEach(clearTimeout);
-    };
-  }, [toasts, dispatch]);
+    return unsubscribe;
+  }, []);
 
   if (!toastRoot || !toasts.length) return null;
 
   return createPortal(
-    <>
+    <div className="toast-container">
       {toasts.map(toast => (
         <div key={toast.id} className={`toast toast-${toast.type}`}>
-          {toast.message}
+          <div className="toast-message">{toast.message}</div>
+          <button className="toast-close" onClick={() => removeToast(toast.id)}>
+            ✕
+          </button>
         </div>
       ))}
-    </>,
+    </div>,
     toastRoot
   );
 };

@@ -10,8 +10,8 @@ import {
   verifyEmail
 } from './auth.thunk';
 import { type AuthState } from './auth.types';
-import { pushNotification } from '../notification/notification.slice';
 import { type ApiErrorResponse } from '../../types/api.types';
+import { toast } from '../../utils/toast';
 
 /* ---------- HELPERS ---------- */
 const fallbackError: ApiErrorResponse = {
@@ -78,10 +78,7 @@ const authSlice = createSlice({
       })
       .addCase(register.fulfilled, (state, action) => {
         state.loading = false;
-        pushNotification({
-          type: 'success',
-          message: action.payload.message
-        });
+        toast.success(action.payload.message);
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
@@ -119,10 +116,7 @@ const authSlice = createSlice({
 
       // verifyEmail
       .addCase(verifyEmail.fulfilled, (_, action) => {
-        pushNotification({
-          type: 'success',
-          message: action.payload.message
-        });
+        toast.success(action.payload.message);
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.loginError = handleError(action.payload);
@@ -134,10 +128,7 @@ const authSlice = createSlice({
       })
       .addCase(resendVerificationEmail.fulfilled, (state, action) => {
         state.resendVerificationEmailLoading = false;
-        pushNotification({
-          type: 'success',
-          message: action.payload.message
-        });
+        toast.success(action.payload.message);
       })
       .addCase(resendVerificationEmail.rejected, (state, action) => {
         state.resendVerificationEmailLoading = false;
@@ -151,10 +142,7 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        pushNotification({
-          type: 'success',
-          message: action.payload.message
-        });
+        toast.success(action.payload.message);
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -168,10 +156,7 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.loading = false;
-        pushNotification({
-          type: 'success',
-          message: action.payload.message
-        });
+        toast.success(action.payload.message);
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
