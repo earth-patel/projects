@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { toast, type ToastPayload } from '../utils/toast';
 
 const toastRoot = document.getElementById('toast-root') as HTMLElement;
-const TOAST_DURATION = 15000; // Duration in milliseconds
+const TOAST_DURATION = 5000; // Duration in milliseconds
 
 const ToastContainer = () => {
   const [toasts, setToasts] = useState<ToastPayload[]>([]);
