@@ -30,6 +30,7 @@ p {
   color: blue;
 }
 .toast-container {
+  font-size: 14px;
   position: fixed;
   top: 20px;
   right: 20px;
@@ -42,7 +43,7 @@ p {
   width: 280px;
   padding: 10px 15px;
   border-radius: 4px;
-  color: #fff;
+  background: #f5f5f5;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -55,8 +56,6 @@ p {
 .toast-close {
   background: transparent;
   border: none;
-  color: #ffffff;
-  font-size: 16px;
   cursor: pointer;
   margin-left: 10px;
   opacity: 0.75;
@@ -66,16 +65,16 @@ p {
   opacity: 1;
 }
 .toast-success {
-  background: #22c55e;
+  border-left: 6px solid #4ade80;
 }
 .toast-error {
-  background: #ef4444;
+  border-left: 6px solid #f87171;
 }
 .toast-warning {
-  background: #f59e0b;
+  border-left: 6px solid #facc15;
 }
 .toast-info {
-  background: #3b82f6;
+  border-left: 6px solid #60a5fa;
 }
 .navbar {
   display: flex;
