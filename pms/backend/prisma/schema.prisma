@@ -33,7 +33,7 @@ model User {
 
 model Organization {
   id          Int     @id @default(autoincrement())
-  name        String  @unique
+  name        String
   description String?
   createdById Int     @map("createdBy")
 
@@ -43,6 +43,9 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   status    Int      @default(1)     @db.TinyInt
+
+  // same user cannot create same org twice
+  @@unique([createdById, name])
 
   @@map("organizations")
 }
