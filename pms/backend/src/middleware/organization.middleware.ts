@@ -9,6 +9,10 @@ export const organizationMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
+  if (!req.user) {
+    return sendErrorResponse(res, createErrorResponse(401, 'Unauthorized'));
+  }
+
   const organizationId = Number(req.headers['x-organization-id']);
 
   if (!organizationId) {
@@ -16,10 +20,6 @@ export const organizationMiddleware = async (
       res,
       createErrorResponse(400, 'Organization required')
     );
-  }
-
-  if (!req.user) {
-    return sendErrorResponse(res, createErrorResponse(401, 'Unauthorized'));
   }
 
   const membership = await getOrganizationMembership(
