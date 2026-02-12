@@ -4,7 +4,7 @@ import { AuthRequest, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import {
   forgotPasswordByEmail,
-  getUserWithOrganizations,
+  getUserById,
   registerUserWithOrganization,
   resendVerificationEmailByEmail,
   resetPasswordByToken,
@@ -95,7 +95,6 @@ export const login = async (req: Request, res: Response) => {
 export const me = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user?.userId;
-
     if (!userId) {
       return sendErrorResponse(
         res,
@@ -105,8 +104,7 @@ export const me = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    const user = await getUserWithOrganizations(userId);
-
+    const user = await getUserById(userId);
     if (!user) {
       return sendErrorResponse(
         res,
@@ -116,22 +114,7 @@ export const me = async (req: AuthRequest, res: Response) => {
       );
     }
 
-    const organizations = user.organizationUserRoles.map(item => ({
-      organizationId: item.organization.id,
-      organizationName: item.organization.name,
-      role: item.role.name
-    }));
-
-    return res.status(200).json({
-      user: {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email
-      },
-      organizations,
-      activeOrganizationId: organizations[0]?.organizationId || null
-    });
+    return res.status(200).json({ user });
   } catch (error) {
     console.error('Error fetching user profile:', error);
     return sendErrorResponse(res);

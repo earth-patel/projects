@@ -1,4 +1,3 @@
-import { type Organization } from '../organization/organization.types';
 import { type ApiErrorResponse } from '../../types/api.types';
 
 type User = {
@@ -10,8 +9,6 @@ type User = {
 
 export type MeResponse = {
   user: User;
-  organizations: Organization[];
-  activeOrganizationId: number | null;
 };
 
 export interface AuthState {

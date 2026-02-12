@@ -1,6 +1,5 @@
 import { logout } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { clearOrganizationState } from '../store/organization/organization.slice';
 
 const NavBar = () => {
   const dispatch = useAppDispatch();
@@ -8,7 +7,6 @@ const NavBar = () => {
 
   const onLogout = () => {
     dispatch(logout());
-    dispatch(clearOrganizationState());
   };
 
   return (

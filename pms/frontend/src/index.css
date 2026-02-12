@@ -117,9 +117,3 @@ form input {
   font-size: 14px;
   color: #6b7280;
 }
-.organization-list-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 16px;
-  margin-top: 16px;
-}
