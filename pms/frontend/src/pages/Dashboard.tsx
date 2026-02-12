@@ -1,5 +1,6 @@
 import Loading from '../components/Loading';
 import NavBar from '../components/NavBar';
+import OrganizationList from '../components/OrganizationList';
 import { useAppSelector } from '../store/index';
 
 const Dashboard = () => {
@@ -12,7 +13,7 @@ const Dashboard = () => {
       <NavBar />
 
       <div style={{ padding: '20px' }}>
-        <div>Organization Lists</div>
+        <OrganizationList />
 
         <button style={{ marginTop: '20px' }}>Create Organization</button>
       </div>

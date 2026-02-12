@@ -1,4 +1,4 @@
-import type { Request, Response } from 'express';
+import { type Request, type Response } from 'express';
 
 import { AuthRequest, LoginDto, RegisterDto } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
