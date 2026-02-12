@@ -5,6 +5,6 @@ import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/mine', authMiddleware, listMyOrganizations);
+router.get('/my', authMiddleware, listMyOrganizations);
 
 export default router;
