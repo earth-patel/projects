@@ -12,7 +12,9 @@ import { useAppDispatch, useAppSelector } from '../store/index';
 const ForgotPassword = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { forgotPasswordError, loading } = useAppSelector(state => state.auth);
+  const { forgotPasswordError, authLoading } = useAppSelector(
+    state => state.auth
+  );
 
   useEffect(() => {
     return () => {
@@ -50,8 +52,8 @@ const ForgotPassword = () => {
           <button type="button" onClick={() => navigate(-1)}>
             Back
           </button>
-          <button type="submit" disabled={loading}>
-            {loading ? 'Sending...' : 'Send Reset Link'}
+          <button type="submit" disabled={authLoading}>
+            {authLoading ? 'Sending...' : 'Send Reset Link'}
           </button>
         </div>
       </form>

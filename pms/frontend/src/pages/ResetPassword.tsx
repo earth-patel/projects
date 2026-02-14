@@ -13,7 +13,9 @@ const ResetPassword = () => {
   const [params] = useSearchParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { resetPasswordError, loading } = useAppSelector(state => state.auth);
+  const { resetPasswordError, authLoading } = useAppSelector(
+    state => state.auth
+  );
 
   useEffect(() => {
     return () => {
@@ -53,8 +55,8 @@ const ResetPassword = () => {
           placeholder="New Password"
           required
         />
-        <button type="submit" disabled={loading}>
-          Reset
+        <button type="submit" disabled={authLoading}>
+          {authLoading ? 'Resetting...' : 'Reset'}
         </button>
 
         <Error error={resetPasswordError?.errors?.form} />

@@ -13,7 +13,7 @@ export type MeResponse = {
 
 export interface AuthState {
   user: User | null;
-  loading: boolean;
+  authLoading: boolean;
 
   loginError: ApiErrorResponse | null;
   registerError: ApiErrorResponse | null;

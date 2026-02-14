@@ -28,7 +28,7 @@ const handleError = (payload?: ApiErrorResponse) => {
 /* ---------- INITIAL STATE ---------- */
 const initialState: AuthState = {
   user: null,
-  loading: false,
+  authLoading: false,
   loginError: null,
   registerError: null,
   forgotPasswordError: null,
@@ -73,43 +73,43 @@ const authSlice = createSlice({
     builder
       // register
       .addCase(register.pending, state => {
-        state.loading = true;
+        state.authLoading = true;
         state.registerError = null;
       })
       .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         toast.success(action.payload.message);
       })
       .addCase(register.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.registerError = handleError(action.payload);
       })
 
       // login
       .addCase(login.pending, state => {
-        state.loading = true;
+        state.authLoading = true;
         state.loginError = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         localStorage.setItem('token', action.payload.token);
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.loginError = handleError(action.payload);
       })
 
       // fetchMe
       .addCase(fetchMe.pending, state => {
-        state.loading = true;
+        state.authLoading = true;
         state.loginError = null;
       })
       .addCase(fetchMe.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.user = action.payload.user;
       })
       .addCase(fetchMe.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.loginError = handleError(action.payload);
         localStorage.removeItem('token');
       })
@@ -137,29 +137,29 @@ const authSlice = createSlice({
 
       // forgotPassword
       .addCase(forgotPassword.pending, state => {
-        state.loading = true;
+        state.authLoading = true;
         state.forgotPasswordError = null;
       })
       .addCase(forgotPassword.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         toast.success(action.payload.message);
       })
       .addCase(forgotPassword.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.forgotPasswordError = handleError(action.payload);
       })
 
       // resetPassword
       .addCase(resetPassword.pending, state => {
-        state.loading = true;
+        state.authLoading = true;
         state.resetPasswordError = null;
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         toast.success(action.payload.message);
       })
       .addCase(resetPassword.rejected, (state, action) => {
-        state.loading = false;
+        state.authLoading = false;
         state.resetPasswordError = handleError(action.payload);
       });
   }

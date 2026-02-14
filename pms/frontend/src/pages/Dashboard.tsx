@@ -2,9 +2,9 @@ import Loading from '../components/Loading';
 import { useAppSelector } from '../store/index';
 
 const Dashboard = () => {
-  const { loading, user } = useAppSelector(state => state.auth);
+  const { authLoading, user } = useAppSelector(state => state.auth);
 
-  if (loading || !user) return <Loading />;
+  if (authLoading || !user) return <Loading />;
 
   return <div>Dashboard</div>;
 };

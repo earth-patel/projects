@@ -11,7 +11,7 @@ import { validateRegister } from '../utils/common';
 const Register = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { registerError, loading } = useAppSelector(state => state.auth);
+  const { registerError, authLoading } = useAppSelector(state => state.auth);
 
   useEffect(() => {
     return () => {
@@ -89,8 +89,8 @@ const Register = () => {
           required
         />
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Registering...' : 'Register'}
+        <button type="submit" disabled={authLoading}>
+          {authLoading ? 'Registering...' : 'Register'}
         </button>
         <Error error={registerError?.errors?.form} />
       </form>

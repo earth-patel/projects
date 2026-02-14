@@ -17,7 +17,7 @@ const Login = () => {
   const [resendTimer, setResendTimer] = useState(0);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { loading, loginError, resendVerificationEmailLoading } =
+  const { authLoading, loginError, resendVerificationEmailLoading } =
     useAppSelector(state => state.auth);
 
   useEffect(() => {
@@ -96,8 +96,8 @@ const Login = () => {
         />
 
         <div className="form-actions">
-          <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
+          <button type="submit" disabled={authLoading}>
+            {authLoading ? 'Logging in...' : 'Login'}
           </button>
           <button type="button" onClick={() => navigate('/forgot-password')}>
             Forgot Password
