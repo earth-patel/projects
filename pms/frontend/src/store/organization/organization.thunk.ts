@@ -15,3 +15,15 @@ export const listMyOrganizations = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- CREATE ORGANIZATION ---------- */
+export const createOrganization = createAsyncThunk<
+  { message: string }, // returned on success
+  string, // argument (organization name)
+  { rejectValue: ApiErrorResponse }
+>('organization/createOrganization', (organizationName, { rejectWithValue }) => {
+  return api
+    .post('organization/create-organization', { organizationName })
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+});

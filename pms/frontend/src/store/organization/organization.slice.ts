@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { listMyOrganizations } from './organization.thunk';
+import { createOrganization, listMyOrganizations } from './organization.thunk';
 import { type OrganizationState } from './organization.types';
 import { toast } from '../../utils/toast';
 
 /* ---------- INITIAL STATE ---------- */
 const initialState: OrganizationState = {
   organizations: [],
-  organizationLoading: false
+  organizationLoading: false,
+  createOrganizationLoading: false
 };
 
 const organizationSlice = createSlice({
@@ -33,6 +34,22 @@ const organizationSlice = createSlice({
         toast.error(
           action.payload?.message ||
             'Failed to fetch organizations. Please try again later.'
+        );
+      })
+
+      // createOrganization
+      .addCase(createOrganization.pending, state => {
+        state.createOrganizationLoading = true;
+      })
+      .addCase(createOrganization.fulfilled, (state, action) => {
+        state.createOrganizationLoading = false;
+        toast.success(action.payload.message);
+      })
+      .addCase(createOrganization.rejected, (state, action) => {
+        state.createOrganizationLoading = false;
+        toast.error(
+          action.payload?.message ||
+            'Failed to create organization. Please try again later.'
         );
       });
   }

@@ -7,4 +7,5 @@ export interface OrganizationItem {
 export interface OrganizationState {
   organizations: OrganizationItem[];
   organizationLoading: boolean;
+  createOrganizationLoading?: boolean;
 }
