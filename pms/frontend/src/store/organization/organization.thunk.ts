@@ -4,7 +4,7 @@ import { api } from '../../api/axios';
 import { type OrganizationItem } from './organization.types';
 import { type ApiErrorResponse } from '../../types/api.types';
 
-/* ---------- VERIFY EMAIL ---------- */
+/* ---------- LIST MY ORGANIZATIONS ---------- */
 export const listMyOrganizations = createAsyncThunk<
   OrganizationItem[], // returned on success
   void, // no argument
