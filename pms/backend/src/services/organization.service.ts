@@ -1,7 +1,7 @@
 import prisma from '../prisma';
 
 export const getUserOrganizations = async (userId: number) => {
-  return prisma.organizationUserRole.findMany({
+  const data = await prisma.organizationUserRole.findMany({
     where: { userId },
     select: {
       organization: {
@@ -12,4 +12,10 @@ export const getUserOrganizations = async (userId: number) => {
       }
     }
   });
+
+  return data.map(item => ({
+    id: item.organization.id,
+    name: item.organization.name,
+    role: item.role.name
+  }));
 };
