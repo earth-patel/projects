@@ -1,9 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router';
 
+import ProtectedLayout from '../layouts/ProtectedLayout';
+import PublicLayout from '../layouts/PublicLayout';
 import Dashboard from '../pages/Dashboard';
 import ForgotPassword from '../pages/ForgotPassword';
 import Login from '../pages/Login';
 import NotFound from '../pages/NotFound';
+import OrganizationSelection from '../pages/OrganizationSelection';
 import Register from '../pages/Register';
 import ResetPassword from '../pages/ResetPassword';
 import VerifyEmail from '../pages/VerifyEmail';
@@ -20,17 +23,33 @@ const router = createBrowserRouter([
   {
     element: <PublicRoutes />,
     children: [
-      { path: '/login', element: <Login /> },
-      { path: '/register', element: <Register /> },
-      { path: '/verify-email', element: <VerifyEmail /> },
-      { path: '/forgot-password', element: <ForgotPassword /> },
-      { path: '/reset-password', element: <ResetPassword /> }
+      {
+        element: <PublicLayout />,
+        children: [
+          { path: '/login', element: <Login /> },
+          { path: '/register', element: <Register /> },
+          { path: '/verify-email', element: <VerifyEmail /> },
+          { path: '/forgot-password', element: <ForgotPassword /> },
+          { path: '/reset-password', element: <ResetPassword /> }
+        ]
+      }
     ]
   },
   // Protected Routes
   {
     element: <ProtectedRoutes />,
-    children: [{ path: '/dashboard', element: <Dashboard /> }]
+    children: [
+      {
+        element: <ProtectedLayout />,
+        children: [
+          {
+            path: '/organization-selection',
+            element: <OrganizationSelection />
+          },
+          { path: '/dashboard', element: <Dashboard /> }
+        ]
+      }
+    ]
   },
   // Fallback Route
   {
