@@ -27,7 +27,6 @@ const organizationSlice = createSlice({
       .addCase(listMyOrganizations.fulfilled, (state, action) => {
         state.organizationLoading = false;
         state.organizations = action.payload;
-        console.log('Fetched organizations:', action.payload);
       })
       .addCase(listMyOrganizations.rejected, (state, action) => {
         state.organizationLoading = false;
