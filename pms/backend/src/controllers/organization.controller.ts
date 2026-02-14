@@ -1,7 +1,11 @@
 import { type Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
-import { getUserOrganizations } from '../services/organization.service';
+import { Prisma } from '../../generated/prisma/client';
+import {
+  createOrganizationService,
+  getUserOrganizations
+} from '../services/organization.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 
 /* ---------- CONTROLLERS ---------- */
@@ -24,6 +28,38 @@ export const listUserOrganizations = async (
     return res.status(200).json(organizations);
   } catch (error) {
     console.error('Error listing user organizations:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const createOrganization = async (req: AuthRequest, res: Response) => {
+  try {
+    const { name } = req.body;
+
+    if (!name) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Organization name is required')
+      );
+    }
+
+    await createOrganizationService({ name, userId: req.user.userId });
+    return res
+      .status(201)
+      .json({ message: 'Organization created successfully' });
+  } catch (error) {
+    // Handle unique constraint violation for organization name
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Organization name already in use')
+      );
+    }
+
+    console.error('Error creating organization:', error);
     return sendErrorResponse(res);
   }
 };

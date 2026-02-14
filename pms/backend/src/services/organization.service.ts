@@ -1,5 +1,10 @@
 import prisma from '../prisma';
 
+type CreateOrganizationInput = {
+  name: string;
+  userId: number;
+};
+
 export const getUserOrganizations = async (userId: number) => {
   const data = await prisma.organizationUserRole.findMany({
     where: { userId },
@@ -18,4 +23,39 @@ export const getUserOrganizations = async (userId: number) => {
     name: item.organization.name,
     role: item.role.name
   }));
+};
+
+export const createOrganizationService = async ({
+  name,
+  userId
+}: CreateOrganizationInput) => {
+  return await prisma.$transaction(async tx => {
+    // create organization
+    const organization = await tx.organization.create({
+      data: {
+        name,
+        createdById: userId
+      }
+    });
+
+    // get owner role
+    const ownerRole = await tx.role.findFirst({
+      where: { name: 'owner' }
+    });
+
+    if (!ownerRole) {
+      throw new Error('Owner role not found. Please seed roles first.');
+    }
+
+    // assign owner role to user
+    await tx.organizationUserRole.create({
+      data: {
+        userId,
+        organizationId: organization.id,
+        roleId: ownerRole.id
+      }
+    });
+
+    return organization;
+  });
 };
