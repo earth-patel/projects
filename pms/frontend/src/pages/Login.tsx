@@ -54,7 +54,7 @@ const Login = () => {
     dispatch(login(payload))
       .unwrap()
       .then(data => {
-        if (data.token) dispatch(fetchMe(data.token as string));
+        if (data.token) dispatch(fetchMe());
       });
   };
 

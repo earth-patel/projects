@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { api } from '../../api/axios';
 import {
   fetchMe,
   forgotPassword,
@@ -42,6 +43,7 @@ const authSlice = createSlice({
   reducers: {
     logout() {
       localStorage.removeItem('token');
+      api.defaults.headers.common['Authorization'] = undefined;
       return initialState;
     },
     setLoginError(state, action: { payload: ApiErrorResponse }) {
@@ -93,6 +95,8 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.authLoading = false;
         localStorage.setItem('token', action.payload.token);
+        api.defaults.headers.common['Authorization'] =
+          `Bearer ${action.payload.token}`;
       })
       .addCase(login.rejected, (state, action) => {
         state.authLoading = false;
@@ -112,6 +116,7 @@ const authSlice = createSlice({
         state.authLoading = false;
         state.loginError = handleError(action.payload);
         localStorage.removeItem('token');
+        api.defaults.headers.common['Authorization'] = undefined;
       })
 
       // verifyEmail

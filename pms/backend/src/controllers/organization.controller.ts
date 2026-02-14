@@ -9,22 +9,16 @@ export const listUserOrganizations = async (
   req: AuthRequest,
   res: Response
 ) => {
-  const userId = req.user.userId;
-
-  if (!userId) {
-    return sendErrorResponse(
-      res,
-      createErrorResponse(401, 'User not authenticated')
-    );
-  }
-
   try {
-    const organizations = await getUserOrganizations(userId);
+    const organizations = await getUserOrganizations(req.user.userId);
 
     if (!organizations) {
       return sendErrorResponse(
         res,
-        createErrorResponse(404, 'No organizations found')
+        createErrorResponse(
+          404,
+          'No organizations found. Please create a new organization to continue.'
+        )
       );
     }
     return res.status(200).json(organizations);

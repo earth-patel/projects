@@ -42,11 +42,11 @@ export const login = createAsyncThunk<
 /* ---------- FETCH ME ---------- */
 export const fetchMe = createAsyncThunk<
   MeResponse, // returned on success
-  string, // argument (token)
+  void, // no argument
   { rejectValue: ApiErrorResponse }
->('auth/fetchMe', (token, { rejectWithValue }) => {
+>('auth/fetchMe', (_, { rejectWithValue }) => {
   return api
-    .get('auth/me', { headers: { Authorization: `Bearer ${token}` } })
+    .get('auth/me')
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });

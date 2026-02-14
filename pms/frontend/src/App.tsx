@@ -12,7 +12,7 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    if (token) dispatch(fetchMe(token as string));
+    if (token) dispatch(fetchMe());
   }, [dispatch]);
 
   return (

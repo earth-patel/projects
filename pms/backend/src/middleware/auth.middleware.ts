@@ -14,8 +14,8 @@ export const authMiddleware = (
   if (!authHeader?.startsWith('Bearer ')) {
     return sendErrorResponse(
       res,
-      createErrorResponse(401, 'Unauthorized', {
-        form: 'Unauthorized access. Please try logging in again'
+      createErrorResponse(401, 'Unauthenticated', {
+        form: 'Authentication token missing or malformed. Please try logging in again.'
       })
     );
   }
