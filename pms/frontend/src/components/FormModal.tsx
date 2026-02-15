@@ -35,7 +35,7 @@ const FormModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} title={title} onClose={onClose}>
+    <Modal isOpen={isOpen} title={title}>
       <form onSubmit={handleSubmit}>
         {children}
 

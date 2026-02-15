@@ -22,11 +22,13 @@ const OrganizationList = () => {
   if (organizationLoading) return <div>Loading organizations...</div>;
 
   return (
-    <div className="organization-list-grid">
-      {organizations.map(org => (
-        <Card key={org.id} title={org.name} subtitle={`Role: ${org.role}`} />
-      ))}
-    </div>
+    <>
+      <div className="organization-list-grid">
+        {organizations.map(org => (
+          <Card key={org.id} title={org.name} subtitle={`Role: ${org.role}`} />
+        ))}
+      </div>
+    </>
   );
 };
 
