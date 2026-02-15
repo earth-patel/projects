@@ -24,6 +24,14 @@ p {
   margin: 0;
   padding: 0;
 }
+.section-header {
+  background: #f9fafb;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+  font-size: 18px;
+}
 .success {
   color: green;
 }

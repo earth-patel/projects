@@ -23,6 +23,7 @@ const OrganizationList = () => {
 
   return (
     <>
+      <div className="section-header">My Organizations</div>
       <div className="organization-list-grid">
         {organizations.map(org => (
           <Card key={org.id} title={org.name} subtitle={`Role: ${org.role}`} />
