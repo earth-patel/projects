@@ -7,7 +7,7 @@ const ProtectedLayout = () => {
     <>
       <NavBar />
 
-      <div style={{ margin: '20px' }}>
+      <div>
         <Outlet />
       </div>
     </>

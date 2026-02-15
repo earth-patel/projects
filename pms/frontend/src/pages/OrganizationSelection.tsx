@@ -55,10 +55,11 @@ const OrganizationSelection = () => {
   };
 
   return (
-    <div>
+    <div className='container'>
       <OrganizationList />
 
       <button
+        className="btn btn-primary"
         style={{ marginTop: '20px' }}
         onClick={() => setIsModalOpen(true)}
       >

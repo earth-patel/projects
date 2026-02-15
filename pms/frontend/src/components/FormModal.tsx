@@ -40,10 +40,10 @@ const FormModal = ({
         {children}
 
         <div className="modal-actions">
-          <button type="button" onClick={onClose}>
+          <button className="btn btn-danger" type="button" onClick={onClose}>
             Cancel
           </button>
-          <button type="submit" disabled={loading}>
+          <button className="btn btn-primary" type="submit" disabled={loading}>
             {loading ? loadingText : submitText}
           </button>
         </div>

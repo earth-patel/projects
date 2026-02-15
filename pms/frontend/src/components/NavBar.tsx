@@ -11,14 +11,18 @@ const NavBar = () => {
 
   return (
     <div className="navbar">
-      <div>
-        <strong>
-          {user?.firstName} {user?.lastName}
-        </strong>
-        <div>{user?.email}</div>
+      <div className="navbar-left">
+        <div className="user-info">
+          <div className="title">
+            {user?.firstName} {user?.lastName}
+          </div>
+          <div className="subtitle">{user?.email}</div>
+        </div>
       </div>
 
-      <button onClick={onLogout}>Logout</button>
+      <button className="btn btn-danger" onClick={onLogout}>
+        Logout
+      </button>
     </div>
   );
 };
