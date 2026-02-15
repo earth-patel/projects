@@ -11,15 +11,15 @@ import {
   verifyEmail
 } from './auth.thunk';
 import { type AuthState } from './auth.types';
-import { type ApiErrorResponse } from '../../types/api.types';
+import { type AuthApiErrorResponse } from '../../types/api.types';
 import { toast } from '../../utils/toast';
 
 /* ---------- HELPERS ---------- */
-const fallbackError: ApiErrorResponse = {
+const fallbackError: AuthApiErrorResponse = {
   errors: { form: 'Something went wrong' }
 };
 
-const handleError = (payload?: ApiErrorResponse) => {
+const handleError = (payload?: AuthApiErrorResponse) => {
   if (payload?.errors && Object.keys(payload.errors).length) {
     return payload;
   }
@@ -46,25 +46,25 @@ const authSlice = createSlice({
       api.defaults.headers.common['Authorization'] = undefined;
       return initialState;
     },
-    setLoginError(state, action: { payload: ApiErrorResponse }) {
+    setLoginError(state, action: { payload: AuthApiErrorResponse }) {
       state.loginError = action.payload;
     },
     clearLoginError(state) {
       state.loginError = null;
     },
-    setRegisterError(state, action: { payload: ApiErrorResponse }) {
+    setRegisterError(state, action: { payload: AuthApiErrorResponse }) {
       state.registerError = action.payload;
     },
     clearRegisterError(state) {
       state.registerError = null;
     },
-    setForgotPasswordError(state, action: { payload: ApiErrorResponse }) {
+    setForgotPasswordError(state, action: { payload: AuthApiErrorResponse }) {
       state.forgotPasswordError = action.payload;
     },
     clearForgotPasswordError(state) {
       state.forgotPasswordError = null;
     },
-    setResetPasswordError(state, action: { payload: ApiErrorResponse }) {
+    setResetPasswordError(state, action: { payload: AuthApiErrorResponse }) {
       state.resetPasswordError = action.payload;
     },
     clearResetPasswordError(state) {

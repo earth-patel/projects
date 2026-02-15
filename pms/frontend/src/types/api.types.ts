@@ -1,4 +1,4 @@
-type Errors = {
+type AuthErrors = {
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -7,7 +7,16 @@ type Errors = {
   form?: string;
 };
 
-export type ApiErrorResponse = {
+type OrganizationErrors = {
+  name?: string;
+};
+
+export type AuthApiErrorResponse = {
   message?: string;
-  errors?: Errors;
+  errors?: AuthErrors;
+};
+
+export type OrganizationApiErrorResponse = {
+  message?: string;
+  errors?: OrganizationErrors;
 };

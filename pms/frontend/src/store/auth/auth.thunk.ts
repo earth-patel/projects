@@ -2,14 +2,14 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { api } from '../../api/axios';
 import { type MeResponse } from './auth.types';
-import { type ApiErrorResponse } from '../../types/api.types';
+import { type AuthApiErrorResponse } from '../../types/api.types';
 import { type LoginPayload, type RegisterPayload } from '../../utils/common';
 
 /* ---------- REGISTER ---------- */
 export const register = createAsyncThunk<
   { message: string }, // returned on success
   RegisterPayload, // argument
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/register', (data, { rejectWithValue }) => {
   return api
     .post('auth/register', data)
@@ -21,7 +21,7 @@ export const register = createAsyncThunk<
 export const login = createAsyncThunk<
   { token: string }, // returned on success
   LoginPayload, // argument
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/login', (data, { rejectWithValue }) => {
   return api
     .post('auth/login', data)
@@ -43,7 +43,7 @@ export const login = createAsyncThunk<
 export const fetchMe = createAsyncThunk<
   MeResponse, // returned on success
   void, // no argument
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/fetchMe', (_, { rejectWithValue }) => {
   return api
     .get('auth/me')
@@ -55,7 +55,7 @@ export const fetchMe = createAsyncThunk<
 export const verifyEmail = createAsyncThunk<
   { message: string }, // returned on success
   string, // argument (token)
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/verifyEmail', (token, { rejectWithValue }) => {
   return api
     .get(`auth/verify-email?token=${token}`)
@@ -67,7 +67,7 @@ export const verifyEmail = createAsyncThunk<
 export const resendVerificationEmail = createAsyncThunk<
   { message: string }, // returned on success
   string, // argument (email)
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/resendVerificationEmail', (email, { rejectWithValue }) => {
   return api
     .post('auth/resend-verification-email', { email })
@@ -79,7 +79,7 @@ export const resendVerificationEmail = createAsyncThunk<
 export const forgotPassword = createAsyncThunk<
   { message: string }, // returned on success
   string, // argument (email)
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/forgotPassword', (email, { rejectWithValue }) => {
   return api
     .post('auth/forgot-password', { email })
@@ -91,7 +91,7 @@ export const forgotPassword = createAsyncThunk<
 export const resetPassword = createAsyncThunk<
   { message: string }, // returned on success
   { token: string; password: string }, // argument
-  { rejectValue: ApiErrorResponse }
+  { rejectValue: AuthApiErrorResponse }
 >('auth/resetPassword', (data, { rejectWithValue }) => {
   return api
     .post('auth/reset-password', data)

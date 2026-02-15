@@ -1,4 +1,4 @@
-import { type ApiErrorResponse } from '../../types/api.types';
+import { type AuthApiErrorResponse } from '../../types/api.types';
 
 type User = {
   id: string;
@@ -15,10 +15,10 @@ export interface AuthState {
   user: User | null;
   authLoading: boolean;
 
-  loginError: ApiErrorResponse | null;
-  registerError: ApiErrorResponse | null;
-  forgotPasswordError: ApiErrorResponse | null;
-  resetPasswordError: ApiErrorResponse | null;
+  loginError: AuthApiErrorResponse | null;
+  registerError: AuthApiErrorResponse | null;
+  forgotPasswordError: AuthApiErrorResponse | null;
+  resetPasswordError: AuthApiErrorResponse | null;
 
   resendVerificationEmailLoading: boolean;
 }
