@@ -34,16 +34,21 @@ export const listUserOrganizations = async (
 
 export const createOrganization = async (req: AuthRequest, res: Response) => {
   try {
-    const { name } = req.body;
+    const { organizationName } = req.body;
 
-    if (!name) {
+    if (!organizationName) {
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Organization name is required')
+        createErrorResponse(400, 'Organization name is required', {
+          name: 'Organization name is required'
+        })
       );
     }
 
-    await createOrganizationService({ name, userId: req.user.userId });
+    await createOrganizationService({
+      name: organizationName,
+      userId: req.user.userId
+    });
     return res
       .status(201)
       .json({ message: 'Organization created successfully' });
@@ -55,7 +60,9 @@ export const createOrganization = async (req: AuthRequest, res: Response) => {
     ) {
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Organization name already in use')
+        createErrorResponse(400, 'Organization name already in use', {
+          name: 'Organization name already in use'
+        })
       );
     }
 

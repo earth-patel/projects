@@ -8,7 +8,8 @@ import { toast } from '../../utils/toast';
 const initialState: OrganizationState = {
   organizations: [],
   organizationLoading: false,
-  createOrganizationLoading: false
+  createOrganizationLoading: false,
+  createOrganizationError: null
 };
 
 const organizationSlice = createSlice({
@@ -17,6 +18,12 @@ const organizationSlice = createSlice({
   reducers: {
     clearOrganizations(state) {
       state.organizations = [];
+    },
+    setCreateOrganizationError(state, action) {
+      state.createOrganizationError = action.payload;
+    },
+    clearCreateOrganizationError(state) {
+      state.createOrganizationError = null;
     }
   },
   extraReducers: builder => {
@@ -47,14 +54,15 @@ const organizationSlice = createSlice({
       })
       .addCase(createOrganization.rejected, (state, action) => {
         state.createOrganizationLoading = false;
-        toast.error(
-          action.payload?.message ||
-            'Failed to create organization. Please try again later.'
-        );
+        state.createOrganizationError = action.payload;
       });
   }
 });
 
-export const { clearOrganizations } = organizationSlice.actions;
+export const {
+  clearOrganizations,
+  clearCreateOrganizationError,
+  setCreateOrganizationError
+} = organizationSlice.actions;
 
 export default organizationSlice.reducer;

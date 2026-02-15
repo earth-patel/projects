@@ -21,7 +21,7 @@ CREATE TABLE `users` (
 -- CreateTable
 CREATE TABLE `organizations` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `name` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(255) COLLATE utf8mb4_bin NOT NULL,
     `description` VARCHAR(191) NULL,
     `createdBy` INTEGER NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
