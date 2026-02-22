@@ -28,3 +28,25 @@ export const sendResetPasswordEmail = async (to: string, token: string) => {
     `
   });
 };
+
+export const sendInvitationEmail = async (
+  to: string,
+  token: string,
+  organizationName: string,
+  roleName: string
+) => {
+  const acceptUrl = `${process.env.FRONTEND_URL}/accept-invite?token=${token}`;
+
+  return sendEmail({
+    to,
+    subject: `You've been invited to join ${organizationName}`,
+    html: `
+      <h2>Organization Invitation</h2>
+      <p>You have been invited to join <strong>${organizationName}</strong> as a <strong>${roleName}</strong>.</p>
+      <p>Click the link below to accept the invitation:</p>
+      <a href="${acceptUrl}">${acceptUrl}</a>
+      <p>This link will expire in 48 hours.</p>
+      <p>If you don't have an account yet, you'll need to register first before accepting.</p>
+    `
+  });
+};
