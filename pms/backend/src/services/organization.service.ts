@@ -40,7 +40,7 @@ export const createOrganizationService = async ({
 
     // get owner role
     const ownerRole = await tx.role.findFirst({
-      where: { name: 'owner' }
+      where: { name: 'OWNER' }
     });
 
     if (!ownerRole) {
