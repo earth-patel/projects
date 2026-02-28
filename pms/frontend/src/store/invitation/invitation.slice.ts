@@ -14,6 +14,9 @@ const invitationSlice = createSlice({
   name: 'invitation',
   initialState,
   reducers: {
+    setInvitationError(state, action) {
+      state.invitationError = action.payload;
+    },
     clearInvitationError(state) {
       state.invitationError = null;
     }
@@ -35,6 +38,7 @@ const invitationSlice = createSlice({
   }
 });
 
-export const { clearInvitationError } = invitationSlice.actions;
+export const { clearInvitationError, setInvitationError } =
+  invitationSlice.actions;
 
 export default invitationSlice.reducer;
