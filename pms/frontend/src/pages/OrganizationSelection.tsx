@@ -27,7 +27,7 @@ const OrganizationSelection = () => {
     };
   }, [dispatch]);
 
-  const validate = () => {
+  const validateCreateOrganization = () => {
     if (!orgName.trim()) {
       dispatch(
         setCreateOrganizationError({
@@ -73,7 +73,7 @@ const OrganizationSelection = () => {
         onClose={onCloseModal}
         onSubmit={handleCreateOrganization}
         submitText="Create"
-        validate={validate}
+        validate={validateCreateOrganization}
         loading={createOrganizationLoading}
         loadingText="Creating..."
       >
