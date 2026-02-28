@@ -16,7 +16,7 @@ type InvitationErrors = {
   email?: string;
   role?: string;
   general?: string;
-}
+};
 
 export type AuthApiErrorResponse = {
   message?: string;
