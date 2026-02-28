@@ -61,7 +61,7 @@ export const createOrganization = async (req: AuthRequest, res: Response) => {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Organization name already in use', {
-          name: 'Organization name already in use'
+          general: 'Organization name already in use'
         })
       );
     }

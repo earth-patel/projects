@@ -9,6 +9,7 @@ type AuthErrors = {
 
 type OrganizationErrors = {
   name?: string;
+  general?: string;
 };
 
 export type AuthApiErrorResponse = {

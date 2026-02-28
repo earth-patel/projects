@@ -9,7 +9,7 @@ const initialState: OrganizationState = {
   organizations: [],
   organizationLoading: false,
   createOrganizationLoading: false,
-  createOrganizationError: null
+  organizationError: null
 };
 
 const organizationSlice = createSlice({
@@ -20,10 +20,10 @@ const organizationSlice = createSlice({
       state.organizations = [];
     },
     setCreateOrganizationError(state, action) {
-      state.createOrganizationError = action.payload;
+      state.organizationError = action.payload;
     },
     clearCreateOrganizationError(state) {
-      state.createOrganizationError = null;
+      state.organizationError = null;
     }
   },
   extraReducers: builder => {
@@ -54,7 +54,7 @@ const organizationSlice = createSlice({
       })
       .addCase(createOrganization.rejected, (state, action) => {
         state.createOrganizationLoading = false;
-        state.createOrganizationError = action.payload;
+        state.organizationError = action.payload;
       });
   }
 });

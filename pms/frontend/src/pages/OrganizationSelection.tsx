@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import Error from '../components/Error';
 import FormInput from '../components/FormInput';
 import FormModal from '../components/FormModal';
 import OrganizationList from '../components/OrganizationList';
@@ -15,7 +16,7 @@ import {
 
 const OrganizationSelection = () => {
   const dispatch = useAppDispatch();
-  const { createOrganizationError, createOrganizationLoading } = useAppSelector(
+  const { organizationError, createOrganizationLoading } = useAppSelector(
     state => state.organization
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -81,10 +82,11 @@ const OrganizationSelection = () => {
           type="text"
           name="organizationName"
           placeholder="Organization name"
-          error={createOrganizationError?.errors?.name}
+          error={organizationError?.errors?.name}
           onChange={e => setOrgName(e.target.value)}
           required
         />
+        <Error error={organizationError?.errors?.general} />
       </FormModal>
     </div>
   );
