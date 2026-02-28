@@ -77,6 +77,11 @@ input {
   gap: 16px;
   margin-top: 16px;
 }
+.org-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 /* toast styles */
 .toast-container {
   font-size: 14px;
@@ -243,6 +248,12 @@ form input {
 }
 .btn-primary:hover {
   background: #0b5ed7;
+}
+.btn-secondary {
+  background: #f0f0f0;
+}
+.btn-secondary:hover {
+  background: #e0e0e0;
 }
 .btn-danger {
   background: #ef4444;

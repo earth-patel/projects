@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from '../store/index';
 import { clearOrganizations } from '../store/organization/organization.slice';
 import { listMyOrganizations } from '../store/organization/organization.thunk';
 
+const CAN_INVITE_ROLES = ['OWNER', 'ADMIN'];
+
 const OrganizationList = () => {
   const dispatch = useAppDispatch();
   const { organizations, organizationLoading } = useAppSelector(
@@ -31,7 +33,12 @@ const OrganizationList = () => {
       </div>
       <div className="organization-list-grid">
         {organizations.map(org => (
-          <Card key={org.id} title={org.name} subtitle={`Role: ${org.role}`} />
+          <div key={org.id} className="org-card-wrapper">
+            <Card title={org.name} subtitle={`Role: ${org.role}`} />
+            {CAN_INVITE_ROLES.includes(org.role) && (
+              <button className="btn btn-secondary">Invite</button>
+            )}
+          </div>
         ))}
       </div>
     </>
