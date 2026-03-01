@@ -39,6 +39,8 @@ export const sendInvitationEmail = async (
 ) => {
   const acceptUrl = `${process.env.FRONTEND_URL}/accept-invite?token=${token}`;
 
+  console.log('Invitation URL:', acceptUrl); // Log the invitation URL for testing purposes
+
   return sendEmail({
     to,
     subject: `You've been invited to join ${organizationName}`,
