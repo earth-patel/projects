@@ -2,7 +2,9 @@ import { sendEmail } from '../services/email.service';
 
 export const sendVerificationEmail = async (to: string, token: string) => {
   const verifyUrl = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
-  console.log('Verification URL:', verifyUrl); // Log the verification URL for debugging
+
+  console.log('Verification URL:', verifyUrl); // Log the verification URL for testing purposes
+
   return sendEmail({
     to,
     subject: 'Verify your email',
