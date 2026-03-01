@@ -56,7 +56,7 @@ export const sendInvitation = async ({
       token,
       organizationId,
       roleId: role.id,
-      invitedByUserId,
+      invitedById: invitedByUserId,
       expiresAt: new Date(Date.now() + INVITE_EXPIRY_HOURS * 60 * 60 * 1000) // 48 hours from now
     },
     include: {

@@ -3,6 +3,7 @@ import cors from 'cors';
 
 import { apiLimiter } from './middleware/rate-limit.middleware';
 import authRoutes from './routes/auth.route';
+import invitationRoutes from './routes/invitation.route';
 import organizationRoutes from './routes/organization.route';
 
 const app = express();
@@ -16,5 +17,6 @@ app.use(apiLimiter);
 app.get('/', (req, res) => res.json({ status: 'ok' }));
 app.use('/api/auth', authRoutes);
 app.use('/api/organization', organizationRoutes);
+app.use('/api/invitation', invitationRoutes);
 
 export default app;
