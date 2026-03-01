@@ -2,19 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { sendInvitation } from './invitation.thunk';
 import { type InvitationState } from './invitation.types';
-import { type InvitationApiErrorResponse } from '../../types/api.types';
+import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
 
 /* ---------- HELPERS ---------- */
-const fallbackError: InvitationApiErrorResponse = {
-  errors: { general: 'Something went wrong' }
-};
-
-const handleError = (payload?: InvitationApiErrorResponse) => {
-  if (payload?.errors && Object.keys(payload.errors).length) {
-    return payload;
-  }
-  return fallbackError;
+const handleInvitationError = (payload: any) => {
+  return handleApiError(payload, { general: 'Something went wrong' });
 };
 
 /* ---------- INITIAL STATE ---------- */
@@ -46,7 +39,7 @@ const invitationSlice = createSlice({
       })
       .addCase(sendInvitation.rejected, (state, action) => {
         state.invitationLoading = false;
-        state.invitationError = handleError(action.payload);
+        state.invitationError = handleInvitationError(action.payload);
       });
   }
 });

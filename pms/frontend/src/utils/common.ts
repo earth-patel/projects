@@ -41,3 +41,14 @@ export const validateRegister = (data: RegisterPayload) => {
 
   return error;
 };
+
+export const handleApiError = (
+  payload: any,
+  fallbackErrors: Record<string, string>
+) => {
+  if (payload?.errors && Object.keys(payload.errors).length > 0) {
+    return payload;
+  }
+
+  return { errors: fallbackErrors };
+};

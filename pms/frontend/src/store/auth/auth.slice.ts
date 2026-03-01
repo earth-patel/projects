@@ -12,18 +12,12 @@ import {
 } from './auth.thunk';
 import { type AuthState } from './auth.types';
 import { type AuthApiErrorResponse } from '../../types/api.types';
+import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
 
 /* ---------- HELPERS ---------- */
-const fallbackError: AuthApiErrorResponse = {
-  errors: { form: 'Something went wrong' }
-};
-
-const handleError = (payload?: AuthApiErrorResponse) => {
-  if (payload?.errors && Object.keys(payload.errors).length) {
-    return payload;
-  }
-  return fallbackError;
+const handleAuthError = (payload: any) => {
+  return handleApiError(payload, { form: 'Something went wrong' });
 };
 
 /* ---------- INITIAL STATE ---------- */
@@ -84,7 +78,7 @@ const authSlice = createSlice({
       })
       .addCase(register.rejected, (state, action) => {
         state.authLoading = false;
-        state.registerError = handleError(action.payload);
+        state.registerError = handleAuthError(action.payload);
       })
 
       // login
@@ -100,7 +94,7 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.authLoading = false;
-        state.loginError = handleError(action.payload);
+        state.loginError = handleAuthError(action.payload);
       })
 
       // fetchMe
@@ -114,7 +108,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchMe.rejected, (state, action) => {
         state.authLoading = false;
-        state.loginError = handleError(action.payload);
+        state.loginError = handleAuthError(action.payload);
         localStorage.removeItem('token');
         api.defaults.headers.common['Authorization'] = undefined;
       })
@@ -124,7 +118,7 @@ const authSlice = createSlice({
         toast.success(action.payload.message);
       })
       .addCase(verifyEmail.rejected, (state, action) => {
-        state.loginError = handleError(action.payload);
+        state.loginError = handleAuthError(action.payload);
       })
 
       // resendVerificationEmail
@@ -137,7 +131,7 @@ const authSlice = createSlice({
       })
       .addCase(resendVerificationEmail.rejected, (state, action) => {
         state.resendVerificationEmailLoading = false;
-        state.loginError = handleError(action.payload);
+        state.loginError = handleAuthError(action.payload);
       })
 
       // forgotPassword
@@ -151,7 +145,7 @@ const authSlice = createSlice({
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.authLoading = false;
-        state.forgotPasswordError = handleError(action.payload);
+        state.forgotPasswordError = handleAuthError(action.payload);
       })
 
       // resetPassword
@@ -165,7 +159,7 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.authLoading = false;
-        state.resetPasswordError = handleError(action.payload);
+        state.resetPasswordError = handleAuthError(action.payload);
       });
   }
 });

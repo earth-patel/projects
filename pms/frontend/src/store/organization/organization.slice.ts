@@ -2,19 +2,12 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { createOrganization, listMyOrganizations } from './organization.thunk';
 import { type OrganizationState } from './organization.types';
-import { type OrganizationApiErrorResponse } from '../../types/api.types';
+import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
 
 /* ---------- HELPERS ---------- */
-const fallbackError: OrganizationApiErrorResponse = {
-  errors: { general: 'Something went wrong' }
-};
-
-const handleError = (payload?: OrganizationApiErrorResponse) => {
-  if (payload?.errors && Object.keys(payload.errors).length) {
-    return payload;
-  }
-  return fallbackError;
+const handleOrganizationError = (payload: any) => {
+  return handleApiError(payload, { general: 'Something went wrong' });
 };
 
 /* ---------- INITIAL STATE ---------- */
@@ -67,7 +60,7 @@ const organizationSlice = createSlice({
       })
       .addCase(createOrganization.rejected, (state, action) => {
         state.createOrganizationLoading = false;
-        state.organizationError = handleError(action.payload);
+        state.organizationError = handleOrganizationError(action.payload);
       });
   }
 });
