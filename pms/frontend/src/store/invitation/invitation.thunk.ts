@@ -10,7 +10,7 @@ export const sendInvitation = createAsyncThunk<
   { rejectValue: InvitationApiErrorResponse }
 >('invitation/sendInvitation', (data, { rejectWithValue }) => {
   return api
-    .post('invitation/send', data)
+    .post('invitation/send-invitation', data)
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
