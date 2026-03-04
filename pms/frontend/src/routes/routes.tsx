@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router';
 
 import ProtectedLayout from '../layouts/ProtectedLayout';
 import PublicLayout from '../layouts/PublicLayout';
+import AcceptInvite from '../pages/AcceptInvite';
 import Dashboard from '../pages/Dashboard';
 import ForgotPassword from '../pages/ForgotPassword';
 import Login from '../pages/Login';
@@ -50,6 +51,11 @@ const router = createBrowserRouter([
         ]
       }
     ]
+  },
+  // accessible to both authenticated and unauthenticated users
+  {
+    element: <PublicLayout />,
+    children: [{ path: '/accept-invite', element: <AcceptInvite /> }]
   },
   // Fallback Route
   {
