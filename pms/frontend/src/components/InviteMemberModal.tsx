@@ -8,7 +8,7 @@ import {
   clearInvitationError,
   setInvitationError
 } from '../store/invitation/invitation.slice';
-import { sendInvitation } from '../store/invitation/invitation.thunk';
+import { sendInvite } from '../store/invitation/invitation.thunk';
 
 interface InviteMemberModalProps {
   isOpen: boolean;
@@ -26,7 +26,7 @@ const InviteMemberModal = ({
   onClose
 }: InviteMemberModalProps) => {
   const dispatch = useAppDispatch();
-  const { invitationError, invitationLoading } = useAppSelector(
+  const { sendInviteError, sendInviteLoading } = useAppSelector(
     state => state.invitation
   );
   const [email, setEmail] = useState('');
@@ -43,7 +43,7 @@ const InviteMemberModal = ({
   }, [dispatch]);
 
   const handleInviteMember = () => {
-    dispatch(sendInvitation({ email, organizationId, roleName }))
+    dispatch(sendInvite({ email, organizationId, roleName }))
       .unwrap()
       .then(() => {
         onClose();
@@ -70,14 +70,14 @@ const InviteMemberModal = ({
       onSubmit={handleInviteMember}
       submitText="Send Invite"
       validate={validateInviteMember}
-      loading={invitationLoading}
+      loading={sendInviteLoading}
       loadingText="Sending..."
     >
       <FormInput
         type="text"
         name="email"
         placeholder="Email address"
-        error={invitationError?.errors?.email}
+        error={sendInviteError?.errors?.email}
         onChange={e => setEmail(e.target.value)}
         required
       />
@@ -91,7 +91,7 @@ const InviteMemberModal = ({
           ))}
         </select>
       )}
-      <Error error={invitationError?.errors?.general} />
+      <Error error={sendInviteError?.errors?.general} />
     </FormModal>
   );
 };

@@ -4,11 +4,11 @@ import { api } from '../../api/axios';
 import { type InvitationApiErrorResponse } from '../../types/api.types';
 
 /* ---------- SEND INVITATION ---------- */
-export const sendInvitation = createAsyncThunk<
+export const sendInvite = createAsyncThunk<
   { message: string }, // returned on success
   { email: string; organizationId: number; roleName: string }, // argument
   { rejectValue: InvitationApiErrorResponse }
->('invitation/sendInvitation', (data, { rejectWithValue }) => {
+>('invitation/sendInvite', (data, { rejectWithValue }) => {
   return api
     .post('invitation/send-invitation', data)
     .then(res => res.data)

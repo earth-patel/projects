@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { sendInvitation } from './invitation.thunk';
+import { sendInvite } from './invitation.thunk';
 import { type InvitationState } from './invitation.types';
 import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
@@ -12,8 +12,8 @@ const handleInvitationError = (payload: any) => {
 
 /* ---------- INITIAL STATE ---------- */
 const initialState: InvitationState = {
-  invitationError: null,
-  invitationLoading: false
+  sendInviteError: null,
+  sendInviteLoading: false
 };
 
 const invitationSlice = createSlice({
@@ -21,25 +21,25 @@ const invitationSlice = createSlice({
   initialState,
   reducers: {
     setInvitationError(state, action) {
-      state.invitationError = action.payload;
+      state.sendInviteError = action.payload;
     },
     clearInvitationError(state) {
-      state.invitationError = null;
+      state.sendInviteError = null;
     }
   },
   extraReducers: builder => {
     builder
-      // send invite
-      .addCase(sendInvitation.pending, state => {
-        state.invitationLoading = true;
+      // sendInvite
+      .addCase(sendInvite.pending, state => {
+        state.sendInviteLoading = true;
       })
-      .addCase(sendInvitation.fulfilled, (state, action) => {
-        state.invitationLoading = false;
+      .addCase(sendInvite.fulfilled, (state, action) => {
+        state.sendInviteLoading = false;
         toast.success(action.payload.message);
       })
-      .addCase(sendInvitation.rejected, (state, action) => {
-        state.invitationLoading = false;
-        state.invitationError = handleInvitationError(action.payload);
+      .addCase(sendInvite.rejected, (state, action) => {
+        state.sendInviteLoading = false;
+        state.sendInviteError = handleInvitationError(action.payload);
       });
   }
 });
