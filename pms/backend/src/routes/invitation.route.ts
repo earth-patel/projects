@@ -5,5 +5,5 @@ import { authMiddleware } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.post('/send-invitation', authMiddleware, invite);
+router.post('/send-invite', authMiddleware, invite);
 export default router;
