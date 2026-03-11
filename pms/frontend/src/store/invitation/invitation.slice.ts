@@ -20,10 +20,10 @@ const invitationSlice = createSlice({
   name: 'invitation',
   initialState,
   reducers: {
-    setInvitationError(state, action) {
+    setSendInviteError(state, action) {
       state.sendInviteError = action.payload;
     },
-    clearInvitationError(state) {
+    clearSendInviteError(state) {
       state.sendInviteError = null;
     }
   },
@@ -40,11 +40,10 @@ const invitationSlice = createSlice({
       .addCase(sendInvite.rejected, (state, action) => {
         state.sendInviteLoading = false;
         state.sendInviteError = handleInvitationError(action.payload);
-      });
+      })
   }
 });
 
-export const { clearInvitationError, setInvitationError } =
-  invitationSlice.actions;
+export const { clearSendInviteError, setSendInviteError } = invitationSlice.actions;
 
 export default invitationSlice.reducer;

@@ -5,8 +5,8 @@ import FormInput from './FormInput';
 import FormModal from './FormModal';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import {
-  clearInvitationError,
-  setInvitationError
+  clearSendInviteError,
+  setSendInviteError
 } from '../store/invitation/invitation.slice';
 import { sendInvite } from '../store/invitation/invitation.thunk';
 
@@ -38,7 +38,7 @@ const InviteMemberModal = ({
 
   useEffect(() => {
     return () => {
-      dispatch(clearInvitationError());
+      dispatch(clearSendInviteError());
     };
   }, [dispatch]);
 
@@ -53,7 +53,7 @@ const InviteMemberModal = ({
   const validateInviteMember = () => {
     if (!email.trim()) {
       dispatch(
-        setInvitationError({
+        setSendInviteError({
           errors: { email: 'Email is required' }
         })
       );
