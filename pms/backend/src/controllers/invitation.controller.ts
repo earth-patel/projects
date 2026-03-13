@@ -87,15 +87,4 @@ export const invite = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getInviteInfo = async (req: AuthRequest, res: Response) => {
-  const { token } = req.query as { token: string };
 
-  if (!token) {
-    return sendErrorResponse(
-      res,
-      createErrorResponse(400, 'Token is required', {
-        
-      })
-    )
-  }
-};
