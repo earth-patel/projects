@@ -86,5 +86,3 @@ export const invite = async (req: AuthRequest, res: Response) => {
     return sendErrorResponse(res);
   }
 };
-
-
