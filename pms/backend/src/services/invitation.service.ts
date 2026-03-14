@@ -90,5 +90,5 @@ export const getInviteInfoByToken = async (token: string) => {
       role: { select: { name: true } },
       expiresAt: true
     }
-  })
-}
+  });
+};

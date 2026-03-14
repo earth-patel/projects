@@ -1,7 +1,10 @@
 import { type Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
-import { getInviteInfoByToken, sendInvitation } from '../services/invitation.service';
+import {
+  getInviteInfoByToken,
+  sendInvitation
+} from '../services/invitation.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 
 /* ---------- CONTROLLERS ---------- */
@@ -96,7 +99,7 @@ export const getInviteInfo = async (req: AuthRequest, res: Response) => {
       createErrorResponse(400, 'Token is required', {
         general: 'Token is required'
       })
-    )
+    );
   }
 
   try {
@@ -108,7 +111,7 @@ export const getInviteInfo = async (req: AuthRequest, res: Response) => {
         createErrorResponse(404, 'Invitation not found or expired', {
           general: 'Invitation not found or expired'
         })
-      )
+      );
     }
 
     return res.status(200).json({ inviteInfo });
