@@ -2,7 +2,7 @@ import { type Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
 import {
-  getInviteInfoByToken,
+  getInvitationInfoByToken,
   sendInvitation
 } from '../services/invitation.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
@@ -90,7 +90,7 @@ export const invite = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getInviteInfo = async (req: AuthRequest, res: Response) => {
+export const getInvitationInfo = async (req: AuthRequest, res: Response) => {
   const { token } = req.query as { token: string };
 
   if (!token) {
@@ -103,7 +103,7 @@ export const getInviteInfo = async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    const inviteInfo = await getInviteInfoByToken(token);
+    const inviteInfo = await getInvitationInfoByToken(token);
 
     if (!inviteInfo) {
       return sendErrorResponse(

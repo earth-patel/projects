@@ -76,7 +76,7 @@ export const sendInvitation = async ({
   return true;
 };
 
-export const getInviteInfoByToken = async (token: string) => {
+export const getInvitationInfoByToken = async (token: string) => {
   return prisma.invitation.findFirst({
     where: {
       token,
