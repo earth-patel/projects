@@ -75,3 +75,20 @@ export const sendInvitation = async ({
 
   return true;
 };
+
+export const getInviteInfoByToken = async (token: string) => {
+  return prisma.invitation.findFirst({
+    where: {
+      token,
+      acceptedAt: null,
+      expiresAt: { gt: new Date() }
+    },
+    select: {
+      id: true,
+      email: true,
+      organization: { select: { id: true, name: true } },
+      role: { select: { name: true } },
+      expiresAt: true
+    }
+  })
+}
