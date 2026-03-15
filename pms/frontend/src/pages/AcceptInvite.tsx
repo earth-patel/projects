@@ -21,8 +21,8 @@ const AcceptInvite = () => {
     dispatch(fetchInviteInfo(token));
 
     return () => {
-      dispatch(clearInvitationInfo())
-    }
+      dispatch(clearInvitationInfo());
+    };
   }, [token, dispatch]);
 
   if (!token) {
