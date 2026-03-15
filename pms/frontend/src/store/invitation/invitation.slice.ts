@@ -59,7 +59,6 @@ const invitationSlice = createSlice({
         state.invitationLoading = false;
         state.invitationInfoError = handleInvitationError(action.payload);
       });
-
   }
 });
 

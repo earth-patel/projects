@@ -26,4 +26,4 @@ export const fetchInviteInfo = createAsyncThunk<
     .get(`invitation/info/${token}`)
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
-})
+});
