@@ -53,7 +53,7 @@ const invitationSlice = createSlice({
       })
       .addCase(fetchInviteInfo.fulfilled, (state, action) => {
         state.invitationLoading = false;
-        state.invitationInfo = action.payload.invitation;
+        state.invitationInfo = action.payload.inviteInfo;
       })
       .addCase(fetchInviteInfo.rejected, (state, action) => {
         state.invitationLoading = false;

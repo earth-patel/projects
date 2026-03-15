@@ -4,7 +4,7 @@ export interface InvitationInfo {
   id: number;
   email: string;
   organization: { id: number; name: string };
-  role: string;
+  role: { name: string };
   expiresAt: string;
 }
 

@@ -18,7 +18,7 @@ export const sendInvite = createAsyncThunk<
 
 /* ---------- GET INVITATION INFO ---------- */
 export const fetchInviteInfo = createAsyncThunk<
-  { invitation: InvitationInfo }, // returned on success
+  { inviteInfo: InvitationInfo }, // returned on success
   string, // token argument
   { rejectValue: InvitationApiErrorResponse }
 >('invitation/fetchInviteInfo', (token, { rejectWithValue }) => {
