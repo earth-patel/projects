@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store';
+import { clearInvitationInfo } from '../store/invitation/invitation.slice';
 import { fetchInviteInfo } from '../store/invitation/invitation.thunk';
 
 const AcceptInvite = () => {
@@ -18,6 +19,10 @@ const AcceptInvite = () => {
   useEffect(() => {
     if (!token) return;
     dispatch(fetchInviteInfo(token));
+
+    return () => {
+      dispatch(clearInvitationInfo())
+    }
   }, [token, dispatch]);
 
   if (!token) {

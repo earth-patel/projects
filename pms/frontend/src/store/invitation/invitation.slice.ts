@@ -28,6 +28,10 @@ const invitationSlice = createSlice({
     },
     clearSendInviteError(state) {
       state.sendInviteError = null;
+    },
+    clearInvitationInfo(state) {
+      state.invitationInfo = null;
+      state.invitationInfoError = null;
     }
   },
   extraReducers: builder => {
@@ -62,7 +66,7 @@ const invitationSlice = createSlice({
   }
 });
 
-export const { clearSendInviteError, setSendInviteError } =
+export const { clearSendInviteError, setSendInviteError, clearInvitationInfo } =
   invitationSlice.actions;
 
 export default invitationSlice.reducer;
