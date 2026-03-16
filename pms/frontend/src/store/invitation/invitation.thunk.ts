@@ -38,4 +38,4 @@ export const acceptInvite = createAsyncThunk<
     .post('invitation/accept-invite', { token })
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
-})
+});
