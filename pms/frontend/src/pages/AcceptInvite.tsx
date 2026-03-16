@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 
+import Error from '../components/Error';
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store';
 import { clearInvitationInfo } from '../store/invitation/invitation.slice';
@@ -13,7 +14,7 @@ const AcceptInvite = () => {
   const token = params.get('token');
 
   const { user } = useAppSelector(state => state.auth);
-  const { invitationInfo, invitationLoading, invitationInfoError } =
+  const { acceptInviteLoading, acceptInviteError, invitationInfo, invitationLoading, invitationInfoError } =
     useAppSelector(state => state.invitation);
 
   useEffect(() => {
@@ -51,6 +52,10 @@ const AcceptInvite = () => {
 
   if (!invitationInfo) return null;
 
+  const handleAccept = () => {
+    // TODO: Implement accept invitation logic, e.g. dispatching an action to accept the invite
+  };
+
   return (
     <div className="page-center">
       <div className="content-card content-card-sm content-card-centered">
@@ -72,6 +77,8 @@ const AcceptInvite = () => {
           )}
         </div>
 
+        <Error error={acceptInviteError?.errors?.general} />
+
         <div className="card-actions">
           {!user ? (
             <>
@@ -79,7 +86,7 @@ const AcceptInvite = () => {
               <button className="btn btn-secondary">Register</button>
             </>
           ) : (
-            <button className="btn btn-primary">Accept Invitation</button>
+            <button className="btn btn-primary" onClick={handleAccept} disabled={acceptInviteLoading}>Accept Invitation</button>
           )}
         </div>
       </div>
