@@ -130,40 +130,42 @@ export const acceptInvitation = async (req: AuthRequest, res: Response) => {
       createErrorResponse(400, 'Token is required', {
         general: 'Token is required'
       })
-    )
+    );
   }
 
   try {
-     const result = await acceptInvitationByToken(token, req.user.userId);
+    const result = await acceptInvitationByToken(token, req.user.userId);
 
-     if (!result) {
+    if (!result) {
       return sendErrorResponse(
         res,
         createErrorResponse(404, 'Invitation not found or expired', {
           general: 'Invitation not found or expired'
         })
       );
-     }
+    }
 
-     if (result === 'EMAIL_MISMATCH') {
+    if (result === 'EMAIL_MISMATCH') {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Email mismatch', {
           general: 'Your account email does not match the invitation email'
         })
       );
-     }
+    }
 
-     if (result === 'ALREADY_MEMBER') {
+    if (result === 'ALREADY_MEMBER') {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Already a member', {
           general: 'You are already a member of this organization'
         })
       );
-     }
+    }
 
-      return res.status(200).json({ message: 'Invitation accepted successfully' });
+    return res
+      .status(200)
+      .json({ message: 'Invitation accepted successfully' });
   } catch (error) {
     console.error('Error accepting invitation:', error);
     return sendErrorResponse(res);
