@@ -93,14 +93,17 @@ export const getInvitationInfoByToken = async (token: string) => {
   });
 };
 
-export const acceptInvitationByToken = async (token: string, userId: number) => {
+export const acceptInvitationByToken = async (
+  token: string,
+  userId: number
+) => {
   const invitation = await prisma.invitation.findFirst({
     where: {
       token,
       acceptedAt: null,
       expiresAt: { gt: new Date() }
     }
-  })
+  });
 
   if (!invitation) return null;
 
@@ -111,23 +114,23 @@ export const acceptInvitationByToken = async (token: string, userId: number) => 
   // Check if they're already a member of the organization
   const existingMembership = await prisma.organizationUserRole.findFirst({
     where: { userId, organizationId: invitation.organizationId }
-  })
+  });
   if (existingMembership) return 'ALREADY_MEMBER';
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async tx => {
     await tx.organizationUserRole.create({
       data: {
         userId,
         organizationId: invitation.organizationId,
         roleId: invitation.roleId
       }
-    })
+    });
 
     await tx.invitation.update({
       where: { id: invitation.id },
       data: { acceptedAt: new Date() }
-    })
+    });
 
     return true;
-  })
+  });
 };
