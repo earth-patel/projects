@@ -14,8 +14,13 @@ const AcceptInvite = () => {
   const token = params.get('token');
 
   const { user } = useAppSelector(state => state.auth);
-  const { acceptInviteLoading, acceptInviteError, invitationInfo, invitationLoading, invitationInfoError } =
-    useAppSelector(state => state.invitation);
+  const {
+    acceptInviteLoading,
+    acceptInviteError,
+    invitationInfo,
+    invitationLoading,
+    invitationInfoError
+  } = useAppSelector(state => state.invitation);
 
   useEffect(() => {
     if (!token) return;
@@ -86,7 +91,13 @@ const AcceptInvite = () => {
               <button className="btn btn-secondary">Register</button>
             </>
           ) : (
-            <button className="btn btn-primary" onClick={handleAccept} disabled={acceptInviteLoading}>Accept Invitation</button>
+            <button
+              className="btn btn-primary"
+              onClick={handleAccept}
+              disabled={acceptInviteLoading}
+            >
+              Accept Invitation
+            </button>
           )}
         </div>
       </div>
