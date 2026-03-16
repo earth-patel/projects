@@ -2,6 +2,7 @@ import { type Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
 import {
+  acceptInvitationByToken,
   getInvitationInfoByToken,
   sendInvitation
 } from '../services/invitation.service';
