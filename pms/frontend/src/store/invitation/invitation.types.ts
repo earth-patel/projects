@@ -15,4 +15,7 @@ export interface InvitationState {
 
   sendInviteError: InvitationApiErrorResponse | null;
   sendInviteLoading: boolean;
+
+  acceptInviteLoading: boolean;
+  acceptInviteError: InvitationApiErrorResponse | null;
 }

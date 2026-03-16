@@ -27,3 +27,15 @@ export const fetchInviteInfo = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- ACCEPT INVITE ---------- */
+export const acceptInvite = createAsyncThunk<
+  { message: string }, // returned on success
+  string, // token argument
+  { rejectValue: InvitationApiErrorResponse }
+>('invitation/acceptInvite', (token, { rejectWithValue }) => {
+  return api
+    .post('invitation/accept-invite', { token })
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+})

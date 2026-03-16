@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { fetchInviteInfo, sendInvite } from './invitation.thunk';
+import { acceptInvite, fetchInviteInfo, sendInvite } from './invitation.thunk';
 import { type InvitationState } from './invitation.types';
 import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
@@ -16,7 +16,9 @@ const initialState: InvitationState = {
   invitationLoading: false,
   invitationInfoError: null,
   sendInviteError: null,
-  sendInviteLoading: false
+  sendInviteLoading: false,
+  acceptInviteLoading: false,
+  acceptInviteError: null
 };
 
 const invitationSlice = createSlice({
@@ -62,6 +64,20 @@ const invitationSlice = createSlice({
       .addCase(fetchInviteInfo.rejected, (state, action) => {
         state.invitationLoading = false;
         state.invitationInfoError = handleInvitationError(action.payload);
+      })
+
+      // acceptInvite
+      .addCase(acceptInvite.pending, state => {
+        state.acceptInviteLoading = true;
+        state.acceptInviteError = null;
+      })
+      .addCase(acceptInvite.fulfilled, (state, action) => {
+        state.acceptInviteLoading = false;
+        toast.success(action.payload.message);
+      })
+      .addCase(acceptInvite.rejected, (state, action) => {
+        state.acceptInviteLoading = false;
+        state.acceptInviteError = handleInvitationError(action.payload);
       });
   }
 });
