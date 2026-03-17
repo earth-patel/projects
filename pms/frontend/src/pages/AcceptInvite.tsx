@@ -5,7 +5,7 @@ import Error from '../components/Error';
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store';
 import { clearInvitationInfo } from '../store/invitation/invitation.slice';
-import { fetchInviteInfo } from '../store/invitation/invitation.thunk';
+import { acceptInvite, fetchInviteInfo } from '../store/invitation/invitation.thunk';
 
 const AcceptInvite = () => {
   const [params] = useSearchParams();
@@ -21,6 +21,9 @@ const AcceptInvite = () => {
     invitationLoading,
     invitationInfoError
   } = useAppSelector(state => state.invitation);
+
+  // Encode redirect URL to preserve token across login/register navigation
+  const redirectParam = encodeURIComponent(`/accept-invite?token=${token}`);
 
   useEffect(() => {
     if (!token) return;
@@ -58,7 +61,17 @@ const AcceptInvite = () => {
   if (!invitationInfo) return null;
 
   const handleAccept = () => {
-    // TODO: Implement accept invitation logic, e.g. dispatching an action to accept the invite
+    if (!user) {
+      // Preserve token in URL across login/register navigation
+      navigate(`/login?redirect=${redirectParam}`);
+      return;
+    }
+
+    dispatch(acceptInvite(token))
+      .unwrap()
+      .then(() => {
+        navigate('/organization-selection');
+      })
   };
 
   return (
@@ -87,8 +100,22 @@ const AcceptInvite = () => {
         <div className="card-actions">
           {!user ? (
             <>
-              <button className="btn btn-primary">Log In</button>
-              <button className="btn btn-secondary">Register</button>
+              <button
+                className="btn btn-primary"
+                onClick={() =>
+                  navigate(`/login?redirect=${redirectParam}`)
+                }
+              >
+                Log In
+              </button>
+              <button
+                className="btn btn-secondary"
+                onClick={() =>
+                  navigate(`/register?redirect=${redirectParam}`)
+                }
+              >
+                Register
+              </button>
             </>
           ) : (
             <button
