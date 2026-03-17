@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router';
 import Error from '../components/Error';
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store';
-import { clearInvitationInfo } from '../store/invitation/invitation.slice';
+import { clearAcceptInviteError, clearInvitationInfo } from '../store/invitation/invitation.slice';
 import {
   acceptInvite,
   fetchInviteInfo
@@ -34,6 +34,7 @@ const AcceptInvite = () => {
 
     return () => {
       dispatch(clearInvitationInfo());
+      dispatch(clearAcceptInviteError());
     };
   }, [token, dispatch]);
 

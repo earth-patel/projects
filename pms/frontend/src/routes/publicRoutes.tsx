@@ -3,11 +3,11 @@ import { Navigate, Outlet, useSearchParams } from 'react-router';
 import { useAppSelector } from '../store';
 
 const PublicRoutes = () => {
-  const [searchParams] = useSearchParams();
+  const [params] = useSearchParams();
   const { user } = useAppSelector(state => state.auth);
 
   if (user) {
-    const redirect = searchParams.get('redirect');
+    const redirect = params.get('redirect');
     return <Navigate to={redirect || '/organization-selection'} replace />;
   }
 

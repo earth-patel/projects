@@ -34,6 +34,9 @@ const invitationSlice = createSlice({
     clearInvitationInfo(state) {
       state.invitationInfo = null;
       state.invitationInfoError = null;
+    },
+    clearAcceptInviteError(state) {
+      state.acceptInviteError = null;
     }
   },
   extraReducers: builder => {
@@ -82,7 +85,7 @@ const invitationSlice = createSlice({
   }
 });
 
-export const { clearSendInviteError, setSendInviteError, clearInvitationInfo } =
+export const { clearSendInviteError, setSendInviteError, clearInvitationInfo, clearAcceptInviteError } =
   invitationSlice.actions;
 
 export default invitationSlice.reducer;
