@@ -85,7 +85,11 @@ const invitationSlice = createSlice({
   }
 });
 
-export const { clearSendInviteError, setSendInviteError, clearInvitationInfo, clearAcceptInviteError } =
-  invitationSlice.actions;
+export const {
+  clearSendInviteError,
+  setSendInviteError,
+  clearInvitationInfo,
+  clearAcceptInviteError
+} = invitationSlice.actions;
 
 export default invitationSlice.reducer;
