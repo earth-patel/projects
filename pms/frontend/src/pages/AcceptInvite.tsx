@@ -5,7 +5,10 @@ import Error from '../components/Error';
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store';
 import { clearInvitationInfo } from '../store/invitation/invitation.slice';
-import { acceptInvite, fetchInviteInfo } from '../store/invitation/invitation.thunk';
+import {
+  acceptInvite,
+  fetchInviteInfo
+} from '../store/invitation/invitation.thunk';
 
 const AcceptInvite = () => {
   const [params] = useSearchParams();
@@ -71,7 +74,7 @@ const AcceptInvite = () => {
       .unwrap()
       .then(() => {
         navigate('/organization-selection');
-      })
+      });
   };
 
   return (
@@ -102,17 +105,13 @@ const AcceptInvite = () => {
             <>
               <button
                 className="btn btn-primary"
-                onClick={() =>
-                  navigate(`/login?redirect=${redirectParam}`)
-                }
+                onClick={() => navigate(`/login?redirect=${redirectParam}`)}
               >
                 Log In
               </button>
               <button
                 className="btn btn-secondary"
-                onClick={() =>
-                  navigate(`/register?redirect=${redirectParam}`)
-                }
+                onClick={() => navigate(`/register?redirect=${redirectParam}`)}
               >
                 Register
               </button>
