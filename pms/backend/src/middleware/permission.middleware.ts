@@ -1,6 +1,7 @@
 import { NextFunction, Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
+import { getUserRoleInOrg } from '../services/permission.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 
 export const requireRole = (allowedRoles: string[]) => {
