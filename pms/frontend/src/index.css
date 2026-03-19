@@ -279,6 +279,9 @@ form input {
   display: flex;
   flex-direction: column;
 }
+.empty-state {
+  color: #ef4444;
+}
 /* button styles */
 .btn {
   display: inline-flex;

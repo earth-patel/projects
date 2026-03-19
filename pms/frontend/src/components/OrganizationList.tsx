@@ -37,7 +37,12 @@ const OrganizationList = () => {
         </div>
       </div>
       <div className="organization-list-grid">
-        {organizations.map(org => (
+        {organizations.length === 0 ? (
+          <div className="empty-state">
+            No organizations yet
+          </div>
+        ) : (
+        organizations.map(org => (
           <div key={org.id} className="org-card-wrapper">
             <Card title={org.name} subtitle={`Role: ${org.role}`} />
             {CAN_INVITE_ROLES.includes(org.role) && (
@@ -49,6 +54,7 @@ const OrganizationList = () => {
               </button>
             )}
           </div>
+        )
         ))}
       </div>
 
