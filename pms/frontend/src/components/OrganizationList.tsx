@@ -38,24 +38,22 @@ const OrganizationList = () => {
       </div>
       <div className="organization-list-grid">
         {organizations.length === 0 ? (
-          <div className="empty-state">
-            No organizations yet
-          </div>
+          <div className="empty-state">No organizations yet</div>
         ) : (
-        organizations.map(org => (
-          <div key={org.id} className="org-card-wrapper">
-            <Card title={org.name} subtitle={`Role: ${org.role}`} />
-            {CAN_INVITE_ROLES.includes(org.role) && (
-              <button
-                className="btn btn-secondary"
-                onClick={() => setInviteTarget(org)}
-              >
-                Invite
-              </button>
-            )}
-          </div>
-        )
-        ))}
+          organizations.map(org => (
+            <div key={org.id} className="org-card-wrapper">
+              <Card title={org.name} subtitle={`Role: ${org.role}`} />
+              {CAN_INVITE_ROLES.includes(org.role) && (
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setInviteTarget(org)}
+                >
+                  Invite
+                </button>
+              )}
+            </div>
+          ))
+        )}
       </div>
 
       {/* Invite Member Modal */}
