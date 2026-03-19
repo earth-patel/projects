@@ -26,7 +26,6 @@ const Register = () => {
     const payload = {
       firstName: formData.get('firstName') as string,
       lastName: formData.get('lastName') as string,
-      organizationName: formData.get('organizationName') as string,
       email: formData.get('email') as string,
       password: formData.get('password') as string
     };
@@ -62,14 +61,6 @@ const Register = () => {
           name="lastName"
           placeholder="Last Name"
           error={registerError?.errors?.lastName}
-          required
-        />
-
-        <FormInput
-          type="text"
-          name="organizationName"
-          placeholder="Organization Name"
-          error={registerError?.errors?.organizationName}
           required
         />
 

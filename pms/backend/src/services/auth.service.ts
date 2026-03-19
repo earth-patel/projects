@@ -28,14 +28,6 @@ export const registerUserWithOrganization = async (data: RegisterDto) => {
       }
     });
 
-    // create organization
-    const organization = await tx.organization.create({
-      data: {
-        name: data.organizationName,
-        createdById: user.id
-      }
-    });
-
     // get owner role
     const ownerRole = await tx.role.findFirst({
       where: { name: 'OWNER' }
@@ -44,15 +36,6 @@ export const registerUserWithOrganization = async (data: RegisterDto) => {
     if (!ownerRole) {
       throw new Error('Owner role not found. Please seed roles first.');
     }
-
-    // assign user to organization with owner role
-    await tx.organizationUserRole.create({
-      data: {
-        userId: user.id,
-        organizationId: organization.id,
-        roleId: ownerRole.id
-      }
-    });
 
     // send verification email
     sendVerificationEmail(user.email, verificationCode);

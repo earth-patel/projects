@@ -6,7 +6,6 @@ export type LoginPayload = {
 export type RegisterPayload = LoginPayload & {
   firstName: string;
   lastName: string;
-  organizationName: string;
 };
 
 type Errors<T> = Partial<Record<keyof T, string>>;
@@ -31,8 +30,6 @@ export const validateRegister = (data: RegisterPayload) => {
 
   if (!data.firstName) error.firstName = 'First name is required';
   if (!data.lastName) error.lastName = 'Last name is required';
-  if (!data.organizationName)
-    error.organizationName = 'Organization name is required';
 
   if (!data.email) error.email = 'Email is required';
   else if (!emailRegex.test(data.email)) error.email = 'Invalid email format';
