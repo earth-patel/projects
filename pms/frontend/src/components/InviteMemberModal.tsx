@@ -83,7 +83,11 @@ const InviteMemberModal = ({
       />
 
       {assignableRoles.length > 1 && (
-        <select className="form-select" value={roleName} onChange={e => setRoleName(e.target.value)}>
+        <select
+          className="form-select"
+          value={roleName}
+          onChange={e => setRoleName(e.target.value)}
+        >
           {assignableRoles.map(role => (
             <option key={role} value={role}>
               {role}
