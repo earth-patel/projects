@@ -89,7 +89,7 @@ const AcceptInvite = () => {
         </div>
 
         <div className="mb-3">
-          <div className="title">
+          <div>
             Join <strong>{invitationInfo.organization.name}</strong> as a{' '}
             <strong>{invitationInfo.role.name}</strong>.
           </div>
