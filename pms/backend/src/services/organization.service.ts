@@ -59,3 +59,30 @@ export const createOrganizationService = async ({
     return organization;
   });
 };
+
+export const getOrganizationMembers = async (organizationId: number) => {
+  const members = await prisma.organizationUserRole.findMany({
+    where: { organizationId },
+    select: {
+      user: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true
+        }
+      },
+      role: {
+        select: { name: true }
+      }
+    }
+  })
+
+  return members.map(m => ({
+    id: m.user.id,
+    firstName: m.user.firstName,
+    lastName: m.user.lastName,
+    email: m.user.email,
+    role: m.role.name
+  }))
+}

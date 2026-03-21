@@ -4,6 +4,7 @@ import { AuthRequest } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import {
   createOrganizationService,
+  getOrganizationMembers,
   getUserOrganizations
 } from '../services/organization.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
@@ -70,3 +71,15 @@ export const createOrganization = async (req: AuthRequest, res: Response) => {
     return sendErrorResponse(res);
   }
 };
+
+export const listOrganizationMembers = async (req: AuthRequest, res: Response) => {
+  const organizationId = Number(req.params.organizationId);
+
+  try {
+    const members = await getOrganizationMembers(organizationId);
+    return res.status(200).json(members);
+  } catch (error) {
+    console.error('Error listing organization members:', error);
+    return sendErrorResponse(res);
+  }
+}
