@@ -16,16 +16,6 @@ export const listUserOrganizations = async (
 ) => {
   try {
     const organizations = await getUserOrganizations(req.user.userId);
-
-    if (!organizations) {
-      return sendErrorResponse(
-        res,
-        createErrorResponse(
-          404,
-          'No organizations found. Please create a new organization to continue.'
-        )
-      );
-    }
     return res.status(200).json(organizations);
   } catch (error) {
     console.error('Error listing user organizations:', error);

@@ -28,15 +28,6 @@ export const registerUserWithOrganization = async (data: RegisterDto) => {
       }
     });
 
-    // get owner role
-    const ownerRole = await tx.role.findFirst({
-      where: { name: 'OWNER' }
-    });
-
-    if (!ownerRole) {
-      throw new Error('Owner role not found. Please seed roles first.');
-    }
-
     // send verification email
     sendVerificationEmail(user.email, verificationCode);
 
