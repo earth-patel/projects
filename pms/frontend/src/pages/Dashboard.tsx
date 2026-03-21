@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import Loading from '../components/Loading';
 import Table from '../components/Table';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { clearMembers } from '../store/organization/organization.slice';
 import { listOrgMembers } from '../store/organization/organization.thunk';
 import { type OrgMember } from '../store/organization/organization.types';
 
@@ -45,9 +44,6 @@ const Dashboard = () => {
     if (!selectedOrganization) return;
     dispatch(listOrgMembers(selectedOrganization.id));
 
-    return () => {
-      dispatch(clearMembers());
-    };
   }, [dispatch, selectedOrganization]);
 
   if (authLoading || !user) return <Loading />;

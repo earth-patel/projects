@@ -51,9 +51,6 @@ const organizationSlice = createSlice({
     clearOrganizations(state) {
       state.organizations = [];
     },
-    clearMembers(state) {
-      state.members = [];
-    },
     setCreateOrganizationError(state, action) {
       state.organizationError = action.payload;
     },
@@ -122,7 +119,6 @@ const organizationSlice = createSlice({
 export const {
   setSelectedOrganization,
   clearOrganizations,
-  clearMembers,
   clearCreateOrganizationError,
   setCreateOrganizationError
 } = organizationSlice.actions;
