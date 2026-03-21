@@ -23,7 +23,7 @@ const handleAuthError = (payload: any) => {
 /* ---------- INITIAL STATE ---------- */
 const initialState: AuthState = {
   user: null,
-  authLoading: false,
+  authLoading: !!localStorage.getItem('token'), // true if token exists
   loginError: null,
   registerError: null,
   forgotPasswordError: null,
@@ -39,7 +39,7 @@ const authSlice = createSlice({
       localStorage.removeItem('token');
       sessionStorage.removeItem('selectedOrganization');
       api.defaults.headers.common['Authorization'] = undefined;
-      return initialState;
+      return { ...initialState, authLoading: false };
     },
     setLoginError(state, action: { payload: AuthApiErrorResponse }) {
       state.loginError = action.payload;

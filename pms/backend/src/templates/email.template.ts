@@ -19,6 +19,8 @@ export const sendVerificationEmail = async (to: string, token: string) => {
 export const sendResetPasswordEmail = async (to: string, token: string) => {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
 
+  console.log('Reset Password URL:', resetUrl); // Log the reset password URL for testing purposes
+
   return sendEmail({
     to,
     subject: 'Reset your password',

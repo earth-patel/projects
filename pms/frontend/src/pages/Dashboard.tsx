@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router';
+import { Navigate } from 'react-router';
 
 import Loading from '../components/Loading';
 import Table from '../components/Table';
@@ -33,7 +33,6 @@ const MEMBER_COLUMNS = [
 ];
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { authLoading, user } = useAppSelector(state => state.auth);
   const { selectedOrganization, members, membersLoading } = useAppSelector(
@@ -50,17 +49,7 @@ const Dashboard = () => {
 
   // Shouldn't normally happen, but guard against direct URL access
   if (!selectedOrganization) {
-    return (
-      <div className="container">
-        <h2 className="heading">No organization selected</h2>
-        <button
-          className="btn btn-primary mt-2"
-          onClick={() => navigate('/organization-selection')}
-        >
-          Go to Organizations
-        </button>
-      </div>
-    );
+    return <Navigate to="/organization-selection" replace />;
   }
 
   return (
