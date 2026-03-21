@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { api } from '../../api/axios';
-import { type OrganizationItem } from './organization.types';
+import { type OrganizationItem, type OrgMember } from './organization.types';
 import { type OrganizationApiErrorResponse } from '../../types/api.types';
 
 /* ---------- LIST MY ORGANIZATIONS ---------- */
@@ -30,3 +30,15 @@ export const createOrganization = createAsyncThunk<
       .catch(err => rejectWithValue(err.response?.data));
   }
 );
+
+/* ---------- LIST ORG MEMBERS ---------- */
+export const listOrgMembers = createAsyncThunk<
+  OrgMember[], // returned on success
+  number, // argument (organization ID)
+  { rejectValue: OrganizationApiErrorResponse }
+>('organization/listOrgMembers', (orgId, { rejectWithValue }) => {
+  return api
+    .get(`organization/${orgId}/members`)
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+});

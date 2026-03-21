@@ -15,7 +15,7 @@ import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 export const requireRole = (allowedRoles: string[]) => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     const organizationId = Number(
-      req.body.organizationId ?? req.params.organizationId
+      req.body?.organizationId ?? req.params.organizationId
     );
     const userId = req.user?.userId;
     console.log(req.body);

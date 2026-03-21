@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { createOrganization, listMyOrganizations } from './organization.thunk';
+import { createOrganization, listMyOrganizations, listOrgMembers } from './organization.thunk';
 import {
   type OrganizationItem,
   type OrganizationState
@@ -29,6 +29,8 @@ const loadSelectedOrg = (): OrganizationItem | null => {
 const initialState: OrganizationState = {
   organizations: [],
   selectedOrganization: loadSelectedOrg(),
+  members: [],
+  membersLoading: false,
   organizationLoading: false,
   createOrganizationLoading: false,
   organizationError: null
@@ -42,12 +44,11 @@ const organizationSlice = createSlice({
       state.selectedOrganization = action.payload;
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(action.payload));
     },
-    clearSelectedOrganization(state) {
-      state.selectedOrganization = null;
-      sessionStorage.removeItem(STORAGE_KEY);
-    },
     clearOrganizations(state) {
       state.organizations = [];
+    },
+    clearMembers(state) {
+      state.members = [];
     },
     setCreateOrganizationError(state, action) {
       state.organizationError = action.payload;
@@ -97,14 +98,27 @@ const organizationSlice = createSlice({
       .addCase(createOrganization.rejected, (state, action) => {
         state.createOrganizationLoading = false;
         state.organizationError = handleOrganizationError(action.payload);
+      })
+
+      // listOrgMembers
+      .addCase(listOrgMembers.pending, (state) => {
+        state.membersLoading = true;
+      })
+      .addCase(listOrgMembers.fulfilled, (state, action) => {
+        state.membersLoading = false;
+        state.members = action.payload;
+      })
+      .addCase(listOrgMembers.rejected, state => {
+        state.membersLoading = false;
+        toast.error('Failed to load members.');
       });
   }
 });
 
 export const {
   setSelectedOrganization,
-  clearSelectedOrganization,
   clearOrganizations,
+  clearMembers,
   clearCreateOrganizationError,
   setCreateOrganizationError
 } = organizationSlice.actions;
