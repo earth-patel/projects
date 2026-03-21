@@ -76,7 +76,7 @@ export const getOrganizationMembers = async (organizationId: number) => {
         select: { name: true }
       }
     }
-  })
+  });
 
   return members.map(m => ({
     id: m.user.id,
@@ -84,5 +84,5 @@ export const getOrganizationMembers = async (organizationId: number) => {
     lastName: m.user.lastName,
     email: m.user.email,
     role: m.role.name
-  }))
-}
+  }));
+};

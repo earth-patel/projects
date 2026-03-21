@@ -12,5 +12,10 @@ const router = Router();
 
 router.get('/my-organizations', authMiddleware, listUserOrganizations);
 router.post('/create-organization', authMiddleware, createOrganization);
-router.get('/:organizationId/members', authMiddleware, requireRole(['OWNER', 'ADMIN', 'MEMBER']), listOrganizationMembers);
+router.get(
+  '/:organizationId/members',
+  authMiddleware,
+  requireRole(['OWNER', 'ADMIN', 'MEMBER']),
+  listOrganizationMembers
+);
 export default router;

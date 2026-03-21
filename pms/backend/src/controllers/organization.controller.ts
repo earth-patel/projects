@@ -72,7 +72,10 @@ export const createOrganization = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const listOrganizationMembers = async (req: AuthRequest, res: Response) => {
+export const listOrganizationMembers = async (
+  req: AuthRequest,
+  res: Response
+) => {
   const organizationId = Number(req.params.organizationId);
 
   try {
@@ -82,4 +85,4 @@ export const listOrganizationMembers = async (req: AuthRequest, res: Response) =
     console.error('Error listing organization members:', error);
     return sendErrorResponse(res);
   }
-}
+};
