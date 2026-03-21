@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router';
+
 import { logout } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
 
 const NavBar = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector(state => state.auth.user);
 
   const onLogout = () => {
@@ -20,9 +23,14 @@ const NavBar = () => {
         </div>
       </div>
 
-      <button className="btn btn-danger" onClick={onLogout}>
-        Logout
-      </button>
+      <div>
+        <button className="btn btn-secondary me-1" onClick={() => navigate('/organization-selection')}>
+          Switch Org
+        </button>
+        <button className="btn btn-danger" onClick={onLogout}>
+          Logout
+        </button>
+      </div>
     </div>
   );
 };
