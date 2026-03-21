@@ -42,7 +42,6 @@ const Dashboard = () => {
   useEffect(() => {
     if (!selectedOrganization) return;
     dispatch(listOrgMembers(selectedOrganization.id));
-
   }, [dispatch, selectedOrganization]);
 
   if (authLoading || !user) return <Loading />;
