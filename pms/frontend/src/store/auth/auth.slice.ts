@@ -37,6 +37,7 @@ const authSlice = createSlice({
   reducers: {
     logout() {
       localStorage.removeItem('token');
+      sessionStorage.removeItem('selectedOrganization');
       api.defaults.headers.common['Authorization'] = undefined;
       return initialState;
     },

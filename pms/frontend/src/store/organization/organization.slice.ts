@@ -1,18 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { createOrganization, listMyOrganizations } from './organization.thunk';
-import { type OrganizationState } from './organization.types';
+import { type OrganizationItem, type OrganizationState } from './organization.types';
 import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
+
+/* ---------- CONSTANTS ---------- */
+const STORAGE_KEY = 'selectedOrganization';
 
 /* ---------- HELPERS ---------- */
 const handleOrganizationError = (payload: any) => {
   return handleApiError(payload, { general: 'Something went wrong' });
 };
 
+const loadSelectedOrg = (): OrganizationItem | null => {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as OrganizationItem) : null;
+  } catch {
+    return null;
+  }
+};
+
 /* ---------- INITIAL STATE ---------- */
 const initialState: OrganizationState = {
   organizations: [],
+  selectedOrganization: loadSelectedOrg(),
   organizationLoading: false,
   createOrganizationLoading: false,
   organizationError: null
@@ -22,6 +35,14 @@ const organizationSlice = createSlice({
   name: 'organization',
   initialState,
   reducers: {
+    setSelectedOrganization(state, action) {
+      state.selectedOrganization = action.payload;
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(action.payload));
+    },
+    clearSelectedOrganization(state) {
+      state.selectedOrganization = null;
+      sessionStorage.removeItem(STORAGE_KEY);
+    },
     clearOrganizations(state) {
       state.organizations = [];
     },
@@ -41,6 +62,18 @@ const organizationSlice = createSlice({
       .addCase(listMyOrganizations.fulfilled, (state, action) => {
         state.organizationLoading = false;
         state.organizations = action.payload;
+
+        // If the cached selected org is stale (e.g. user was removed),
+        // verify it still exists in the freshly loaded list. If not, clear it from state and sessionStorage.
+        if (state.selectedOrganization) {
+          const stillExists = action.payload.some(
+            org => org.id === state.selectedOrganization?.id
+          )
+          if (!stillExists) {
+            state.selectedOrganization = null;
+            sessionStorage.removeItem(STORAGE_KEY);
+          }
+        }
       })
       .addCase(listMyOrganizations.rejected, (state, action) => {
         state.organizationLoading = false;
@@ -66,6 +99,8 @@ const organizationSlice = createSlice({
 });
 
 export const {
+  setSelectedOrganization,
+  clearSelectedOrganization,
   clearOrganizations,
   clearCreateOrganizationError,
   setCreateOrganizationError

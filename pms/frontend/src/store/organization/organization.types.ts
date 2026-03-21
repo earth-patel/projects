@@ -8,6 +8,7 @@ export interface OrganizationItem {
 
 export interface OrganizationState {
   organizations: OrganizationItem[];
+  selectedOrganization: OrganizationItem | null;
   organizationError?: OrganizationApiErrorResponse | null;
   organizationLoading: boolean;
   createOrganizationLoading?: boolean;
