@@ -24,7 +24,10 @@ const NavBar = () => {
       </div>
 
       <div>
-        <button className="btn btn-secondary me-1" onClick={() => navigate('/organization-selection')}>
+        <button
+          className="btn btn-secondary me-1"
+          onClick={() => navigate('/organization-selection')}
+        >
           Switch Org
         </button>
         <button className="btn btn-danger" onClick={onLogout}>

@@ -14,12 +14,15 @@ const Dashboard = () => {
   if (!selectedOrganization) {
     return (
       <div className="container">
-        <h2 className='heading'>No organization selected</h2>
-        <button className='btn btn-primary mt-2' onClick={() => navigate('/organization-selection')}>
+        <h2 className="heading">No organization selected</h2>
+        <button
+          className="btn btn-primary mt-2"
+          onClick={() => navigate('/organization-selection')}
+        >
           Go to Organizations
         </button>
       </div>
-    )
+    );
   }
 
   return (
