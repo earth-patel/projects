@@ -1,7 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { createOrganization, listMyOrganizations } from './organization.thunk';
-import { type OrganizationItem, type OrganizationState } from './organization.types';
+import {
+  type OrganizationItem,
+  type OrganizationState
+} from './organization.types';
 import { handleApiError } from '../../utils/common';
 import { toast } from '../../utils/toast';
 
@@ -68,7 +71,7 @@ const organizationSlice = createSlice({
         if (state.selectedOrganization) {
           const stillExists = action.payload.some(
             org => org.id === state.selectedOrganization?.id
-          )
+          );
           if (!stillExists) {
             state.selectedOrganization = null;
             sessionStorage.removeItem(STORAGE_KEY);

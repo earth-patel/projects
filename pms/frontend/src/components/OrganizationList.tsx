@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router';
 import Card from './Card';
 import InviteMemberModal from './InviteMemberModal';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { clearOrganizations, setSelectedOrganization } from '../store/organization/organization.slice';
+import {
+  clearOrganizations,
+  setSelectedOrganization
+} from '../store/organization/organization.slice';
 import { listMyOrganizations } from '../store/organization/organization.thunk';
 import { type OrganizationItem } from '../store/organization/organization.types';
 
@@ -31,7 +34,7 @@ const OrganizationList = () => {
   const handleSelectOrg = (org: OrganizationItem) => {
     dispatch(setSelectedOrganization(org));
     navigate('/dashboard');
-  }
+  };
 
   if (organizationLoading) return <div>Loading organizations...</div>;
 
@@ -49,13 +52,17 @@ const OrganizationList = () => {
         ) : (
           organizations.map(org => (
             <div key={org.id} className="org-card-wrapper">
-              <Card title={org.name} subtitle={`Role: ${org.role}`} onClick={() => handleSelectOrg(org)} />
+              <Card
+                title={org.name}
+                subtitle={`Role: ${org.role}`}
+                onClick={() => handleSelectOrg(org)}
+              />
               {CAN_INVITE_ROLES.includes(org.role) && (
                 <button
                   className="btn btn-secondary"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation(); // Prevent card click
-                    setInviteTarget(org)
+                    setInviteTarget(org);
                   }}
                 >
                   Invite
