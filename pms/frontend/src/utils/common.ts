@@ -19,7 +19,8 @@ export const validateLogin = (data: LoginPayload) => {
   const error: Errors<LoginPayload> = {};
 
   if (!data.email) error.email = 'Email is required';
-  if (!data.password) error.password = validatePassword(data.password);
+  const passwordError = validatePassword(data.password);
+  if (passwordError) error.password = passwordError;
 
   return error;
 };
@@ -34,7 +35,8 @@ export const validateRegister = (data: RegisterPayload) => {
   if (!data.email) error.email = 'Email is required';
   else if (!emailRegex.test(data.email)) error.email = 'Invalid email format';
 
-  if (!data.password) error.password = validatePassword(data.password);
+  const passwordError = validatePassword(data.password);
+  if (passwordError) error.password = passwordError;
 
   return error;
 };
