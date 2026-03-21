@@ -2,9 +2,36 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 
 import Loading from '../components/Loading';
+import Table from '../components/Table';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import { clearMembers } from '../store/organization/organization.slice';
 import { listOrgMembers } from '../store/organization/organization.thunk';
+import { type OrgMember } from '../store/organization/organization.types';
+
+const ROLE_BADGE: Record<string, string> = {
+  OWNER: 'badge-purple',
+  ADMIN: 'badge-blue',
+  MEMBER: 'badge-gray'
+};
+
+const MEMBER_COLUMNS = [
+  {
+    header: 'Name',
+    render: (m: OrgMember) => `${m.firstName} ${m.lastName}`
+  },
+  {
+    header: 'Email',
+    render: (m: OrgMember) => m.email
+  },
+  {
+    header: 'Role',
+    render: (m: OrgMember) => (
+      <span className={`badge ${ROLE_BADGE[m.role] ?? 'badge-gray'}`}>
+        {m.role}
+      </span>
+    )
+  }
+];
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -41,42 +68,26 @@ const Dashboard = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
+      <div className='mb-3'>
         <h2 className="heading">{selectedOrganization.name}</h2>
-        <p className="subtitle" style={{ marginTop: 4 }}>
+        <p className="subtitle mt-1">
           Your role: <strong>{selectedOrganization.role}</strong>
         </p>
       </div>
 
       {/* Members section */}
       <div>
-        <div>
-          Members
-        </div>
+        <div className='title mb-1'>Members</div>
 
         {membersLoading ? (
           <Loading />
-        ) : members.length === 0 ? (
-          <p>No members found.</p>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-              </tr>
-            </thead>
-            <tbody>
-              {members.map(member => (
-                <tr key={member.id}>
-                  <td>{member.firstName} {member.lastName}</td>
-                  <td>{member.email}</td>
-                  <td>{member.role}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <Table
+            columns={MEMBER_COLUMNS}
+            data={members}
+            keyExtractor={(m) => m.id}
+            emptyMessage="No members found."
+          />
         )}
       </div>
     </div>
