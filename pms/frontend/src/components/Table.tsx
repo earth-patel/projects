@@ -5,12 +5,17 @@ interface Column<T> {
 
 interface TableProps<T> {
   columns: Column<T>[];
-  data: T[],
+  data: T[];
   keyExtractor: (row: T) => string | number;
   emptyMessage?: string;
 }
 
-const Table = <T,>({ columns, data, keyExtractor, emptyMessage = "No data found"}: TableProps<T>) => {
+const Table = <T,>({
+  columns,
+  data,
+  keyExtractor,
+  emptyMessage = 'No data found'
+}: TableProps<T>) => {
   if (data.length === 0) {
     return <div className="subtitle">{emptyMessage}</div>;
   }
@@ -34,7 +39,7 @@ const Table = <T,>({ columns, data, keyExtractor, emptyMessage = "No data found"
         ))}
       </tbody>
     </table>
-  )
+  );
 };
 
 export default Table;

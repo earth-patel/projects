@@ -37,7 +37,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { authLoading, user } = useAppSelector(state => state.auth);
-  const { selectedOrganization, members, membersLoading } = useAppSelector(state => state.organization);
+  const { selectedOrganization, members, membersLoading } = useAppSelector(
+    state => state.organization
+  );
 
   useEffect(() => {
     if (!selectedOrganization) return;
@@ -68,7 +70,7 @@ const Dashboard = () => {
   return (
     <div className="container">
       {/* Header */}
-      <div className='mb-3'>
+      <div className="mb-3">
         <h2 className="heading">{selectedOrganization.name}</h2>
         <p className="subtitle mt-1">
           Your role: <strong>{selectedOrganization.role}</strong>
@@ -77,7 +79,7 @@ const Dashboard = () => {
 
       {/* Members section */}
       <div>
-        <div className='title mb-1'>Members</div>
+        <div className="title mb-1">Members</div>
 
         {membersLoading ? (
           <Loading />
@@ -85,7 +87,7 @@ const Dashboard = () => {
           <Table
             columns={MEMBER_COLUMNS}
             data={members}
-            keyExtractor={(m) => m.id}
+            keyExtractor={m => m.id}
             emptyMessage="No members found."
           />
         )}

@@ -1,6 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { createOrganization, listMyOrganizations, listOrgMembers } from './organization.thunk';
+import {
+  createOrganization,
+  listMyOrganizations,
+  listOrgMembers
+} from './organization.thunk';
 import {
   type OrganizationItem,
   type OrganizationState
@@ -101,7 +105,7 @@ const organizationSlice = createSlice({
       })
 
       // listOrgMembers
-      .addCase(listOrgMembers.pending, (state) => {
+      .addCase(listOrgMembers.pending, state => {
         state.membersLoading = true;
       })
       .addCase(listOrgMembers.fulfilled, (state, action) => {
