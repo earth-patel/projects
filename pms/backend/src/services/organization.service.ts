@@ -129,3 +129,48 @@ export const removeOrganizationMember = async ({
 
   return true;
 };
+
+export const changeOrganizationMemberRole = async ({
+  organizationId,
+  targetUserId,
+  newRoleName,
+  requestingUserId
+}: {
+  organizationId: number;
+  targetUserId: number;
+  newRoleName: string;
+  requestingUserId: number;
+}) => {
+  // Cannot change your own role
+  if (targetUserId === requestingUserId) return 'CANNOT_CHANGE_OWN_ROLE';
+
+  // OWNER role cannot be assigned via this flow
+  if (newRoleName === 'OWNER') return 'INVALID_ROLE';
+
+  // Validate the new role exists
+  const newRole = await prisma.role.findUnique({
+    where: { name: newRoleName }
+  });
+  if (!newRole) return 'INVALID_ROLE';
+
+  // Get target's current membership
+  const targetMembership = await prisma.organizationUserRole.findFirst({
+    where: { userId: targetUserId, organizationId },
+    include: { role: { select: { name: true } } }
+  });
+
+  if (!targetMembership) return 'MEMBER_NOT_FOUND';
+
+  // OWNER's role cannot be changed
+  if (targetMembership.role.name === 'OWNER') return 'CANNOT_CHANGE_OWNER_ROLE';
+
+  // No-op guard: If the target already has the desired role, do nothing
+  if (targetMembership.role.name === newRoleName) return 'ALREADY_HAS_ROLE';
+
+  await prisma.organizationUserRole.update({
+    where: { id: targetMembership.id },
+    data: { roleId: newRole.id }
+  });
+
+  return true;
+};

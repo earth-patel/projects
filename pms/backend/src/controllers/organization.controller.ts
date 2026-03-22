@@ -3,6 +3,7 @@ import { type Response } from 'express';
 import { AuthRequest } from '../dtos/auth.dto';
 import { Prisma } from '../../generated/prisma/client';
 import {
+  changeOrganizationMemberRole,
   createOrganizationService,
   getOrganizationMembers,
   getUserOrganizations,
@@ -127,6 +128,68 @@ export const removeMember = async (req: AuthRequest, res: Response) => {
     return res.status(200).json({ message: 'Member removed successfully' });
   } catch (error) {
     console.error('Error removing member:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const updateMemberRole = async (req: AuthRequest, res: Response) => {
+  const organizationId = Number(req.params.organizationId);
+  const targetUserId = Number(req.params.userId);
+  const { roleName } = req.body as { roleName?: string };
+
+  if (isNaN(targetUserId)) {
+    return sendErrorResponse(res, createErrorResponse(400, 'Invalid user ID'));
+  }
+
+  if (!roleName) {
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Role name is required')
+    );
+  }
+
+  try {
+    const result = await changeOrganizationMemberRole({
+      organizationId,
+      targetUserId,
+      newRoleName: roleName,
+      requestingUserId: req.user.userId
+    });
+
+    if (result === 'CANNOT_CHANGE_OWN_ROLE') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'You cannot change your own role')
+      );
+    }
+    if (result === 'INVALID_ROLE') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Role must be ADMIN or MEMBER')
+      );
+    }
+    if (result === 'MEMBER_NOT_FOUND') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(404, 'Member not found in this organization')
+      );
+    }
+    if (result === 'CANNOT_CHANGE_OWNER_ROLE') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, "The owner's role cannot be changed")
+      );
+    }
+    if (result === 'ALREADY_HAS_ROLE') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'The member already has this role')
+      );
+    }
+
+    return res.status(200).json({ message: 'Role updated successfully' });
+  } catch (error) {
+    console.error('Error updating member role:', error);
     return sendErrorResponse(res);
   }
 };
