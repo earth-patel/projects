@@ -4,7 +4,8 @@ import {
   createOrganization,
   listOrganizationMembers,
   listUserOrganizations,
-  removeMember
+  removeMember,
+  updateMemberRole
 } from '../controllers/organization.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/permission.middleware';
@@ -25,5 +26,12 @@ router.delete(
   authMiddleware,
   requireRole(['OWNER', 'ADMIN']),
   removeMember
+);
+// Only OWNER can change member roles
+router.put(
+  '/:organizationId/members/:userId/role',
+  authMiddleware,
+  requireRole(['OWNER']),
+  updateMemberRole
 );
 export default router;
