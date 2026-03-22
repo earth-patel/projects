@@ -42,3 +42,15 @@ export const listOrgMembers = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- REMOVE MEMBER ---------- */
+export const removeMember = createAsyncThunk<
+  { message: string }, // returned on success
+  { orgId: number; userId: number }, // argument
+  { rejectValue: OrganizationApiErrorResponse }
+>('organization/removeMember', ({ orgId, userId }, { rejectWithValue }) => {
+  return api
+    .delete(`organization/${orgId}/members/${userId}`)
+    .then(res => res.data)
+    .catch(err => rejectWithValue(err.response?.data));
+});

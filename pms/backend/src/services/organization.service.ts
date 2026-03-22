@@ -86,3 +86,46 @@ export const getOrganizationMembers = async (organizationId: number) => {
     role: m.role.name
   }));
 };
+
+export const removeOrganizationMember = async ({
+  organizationId,
+  targetUserId,
+  requestingUserId
+}: {
+  organizationId: number;
+  targetUserId: number;
+  requestingUserId: number;
+}) => {
+  // cannot remove yourself
+  if (targetUserId === requestingUserId) return 'CANNOT_REMOVE_SELF';
+
+  const targetMembership = await prisma.organizationUserRole.findFirst({
+    where: { userId: targetUserId, organizationId },
+    include: { role: { select: { name: true } } }
+  });
+
+  if (!targetMembership) return 'MEMBER_NOT_FOUND';
+
+  // OWNER cannot be removed
+  if (targetMembership.role.name === 'OWNER') return 'CANNOT_REMOVE_OWNER';
+
+  // Get requesting user's role to enforce ADMIN restriction
+  const requestingMembership = await prisma.organizationUserRole.findFirst({
+    where: { userId: requestingUserId, organizationId },
+    include: { role: { select: { name: true } } }
+  });
+
+  // ADMIN can only remove MEMBER, not other ADMINs
+  if (
+    requestingMembership?.role.name === 'ADMIN' &&
+    targetMembership.role.name !== 'MEMBER'
+  ) {
+    return 'INSUFFICIENT_PERMISSIONS';
+  }
+
+  await prisma.organizationUserRole.delete({
+    where: { id: targetMembership.id }
+  });
+
+  return true;
+};

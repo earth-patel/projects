@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   createOrganization,
   listMyOrganizations,
-  listOrgMembers
+  listOrgMembers,
+  removeMember
 } from './organization.thunk';
 import {
   type OrganizationItem,
@@ -37,7 +38,8 @@ const initialState: OrganizationState = {
   membersLoading: false,
   organizationLoading: false,
   createOrganizationLoading: false,
-  organizationError: null
+  organizationError: null,
+  removeMemberLoading: false
 };
 
 const organizationSlice = createSlice({
@@ -112,6 +114,19 @@ const organizationSlice = createSlice({
       .addCase(listOrgMembers.rejected, state => {
         state.membersLoading = false;
         toast.error('Failed to load members.');
+      })
+
+      // removeMember
+      .addCase(removeMember.pending, state => {
+        state.removeMemberLoading = true;
+      })
+      .addCase(removeMember.fulfilled, (state, action) => {
+        state.removeMemberLoading = false;
+        toast.success(action.payload.message);
+      })
+      .addCase(removeMember.rejected, (state, action) => {
+        state.removeMemberLoading = false;
+        toast.error(action.payload?.message || 'Failed to remove member.');
       });
   }
 });

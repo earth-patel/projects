@@ -22,4 +22,5 @@ export interface OrganizationState {
   organizationError?: OrganizationApiErrorResponse | null;
   organizationLoading: boolean;
   createOrganizationLoading?: boolean;
+  removeMemberLoading?: boolean;
 }

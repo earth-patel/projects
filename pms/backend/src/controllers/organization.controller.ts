@@ -5,7 +5,8 @@ import { Prisma } from '../../generated/prisma/client';
 import {
   createOrganizationService,
   getOrganizationMembers,
-  getUserOrganizations
+  getUserOrganizations,
+  removeOrganizationMember
 } from '../services/organization.service';
 import { createErrorResponse, sendErrorResponse } from '../utils/response.util';
 
@@ -73,6 +74,66 @@ export const listOrganizationMembers = async (
     return res.status(200).json(members);
   } catch (error) {
     console.error('Error listing organization members:', error);
+    return sendErrorResponse(res);
+  }
+};
+
+export const removeMember = async (req: AuthRequest, res: Response) => {
+  const organizationId = Number(req.params.organizationId);
+  const targetUserId = Number(req.params.userId);
+
+  if (isNaN(targetUserId)) {
+    return sendErrorResponse(
+      res,
+      createErrorResponse(400, 'Invalid user ID', {
+        general: 'Invalid user ID'
+      })
+    );
+  }
+
+  try {
+    const result = await removeOrganizationMember({
+      organizationId,
+      targetUserId,
+      requestingUserId: req.user.userId
+    });
+
+    if (result === 'CANNOT_REMOVE_SELF') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Cannot remove yourself', {
+          general: 'You cannot remove yourself from the organization'
+        })
+      );
+    }
+    if (result === 'MEMBER_NOT_FOUND') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(404, 'Member not found', {
+          general: 'Member not found in this organization'
+        })
+      );
+    }
+    if (result === 'CANNOT_REMOVE_OWNER') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(400, 'Cannot remove owner', {
+          general: 'The organization owner cannot be removed'
+        })
+      );
+    }
+    if (result === 'INSUFFICIENT_PERMISSIONS') {
+      return sendErrorResponse(
+        res,
+        createErrorResponse(403, 'Insufficient permissions', {
+          general: 'Admins can only remove members, not other admins'
+        })
+      );
+    }
+
+    return res.status(200).json({ message: 'Member removed successfully' });
+  } catch (error) {
+    console.error('Error removing member:', error);
     return sendErrorResponse(res);
   }
 };

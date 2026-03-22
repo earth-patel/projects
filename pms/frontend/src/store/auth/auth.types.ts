@@ -1,7 +1,7 @@
 import { type AuthApiErrorResponse } from '../../types/api.types';
 
 type User = {
-  id: string;
+  id: number;
   email: string;
   firstName: string;
   lastName: string;
