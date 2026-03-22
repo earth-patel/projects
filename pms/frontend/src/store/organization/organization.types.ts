@@ -23,4 +23,5 @@ export interface OrganizationState {
   organizationLoading: boolean;
   createOrganizationLoading?: boolean;
   removeMemberLoading?: boolean;
+  changeRoleLoading?: boolean;
 }

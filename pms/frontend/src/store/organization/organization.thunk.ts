@@ -54,3 +54,18 @@ export const removeMember = createAsyncThunk<
     .then(res => res.data)
     .catch(err => rejectWithValue(err.response?.data));
 });
+
+/* ---------- CHANGE MEMBER ROLE ---------- */
+export const changeMemberRole = createAsyncThunk<
+  { message: string }, // returned on success
+  { orgId: number; userId: number; roleName: string }, // argument
+  { rejectValue: OrganizationApiErrorResponse }
+>(
+  'organization/changeMemberRole',
+  ({ orgId, userId, roleName }, { rejectWithValue }) => {
+    return api
+      .patch(`organization/${orgId}/members/${userId}/role`, { roleName })
+      .then(res => res.data)
+      .catch(err => rejectWithValue(err.response?.data));
+  }
+);

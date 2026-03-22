@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import {
+  changeMemberRole,
   createOrganization,
   listMyOrganizations,
   listOrgMembers,
@@ -39,7 +40,8 @@ const initialState: OrganizationState = {
   organizationLoading: false,
   createOrganizationLoading: false,
   organizationError: null,
-  removeMemberLoading: false
+  removeMemberLoading: false,
+  changeRoleLoading: false
 };
 
 const organizationSlice = createSlice({
@@ -127,6 +129,19 @@ const organizationSlice = createSlice({
       .addCase(removeMember.rejected, (state, action) => {
         state.removeMemberLoading = false;
         toast.error(action.payload?.message || 'Failed to remove member.');
+      })
+
+      // changeMemberRole
+      .addCase(changeMemberRole.pending, state => {
+        state.changeRoleLoading = true;
+      })
+      .addCase(changeMemberRole.fulfilled, (state, action) => {
+        state.changeRoleLoading = false;
+        toast.success(action.payload.message);
+      })
+      .addCase(changeMemberRole.rejected, (state, action) => {
+        state.changeRoleLoading = false;
+        toast.error(action.payload?.message || 'Failed to update role.');
       });
   }
 });
