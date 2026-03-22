@@ -83,12 +83,7 @@ export const removeMember = async (req: AuthRequest, res: Response) => {
   const targetUserId = Number(req.params.userId);
 
   if (isNaN(targetUserId)) {
-    return sendErrorResponse(
-      res,
-      createErrorResponse(400, 'Invalid user ID', {
-        general: 'Invalid user ID'
-      })
-    );
+    return sendErrorResponse(res, createErrorResponse(400, 'Invalid user ID'));
   }
 
   try {
@@ -101,33 +96,31 @@ export const removeMember = async (req: AuthRequest, res: Response) => {
     if (result === 'CANNOT_REMOVE_SELF') {
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Cannot remove yourself', {
-          general: 'You cannot remove yourself from the organization'
-        })
+        createErrorResponse(
+          400,
+          'You cannot remove yourself from the organization'
+        )
       );
     }
     if (result === 'MEMBER_NOT_FOUND') {
       return sendErrorResponse(
         res,
-        createErrorResponse(404, 'Member not found', {
-          general: 'Member not found in this organization'
-        })
+        createErrorResponse(404, 'Member not found in this organization')
       );
     }
     if (result === 'CANNOT_REMOVE_OWNER') {
       return sendErrorResponse(
         res,
-        createErrorResponse(400, 'Cannot remove owner', {
-          general: 'The organization owner cannot be removed'
-        })
+        createErrorResponse(400, 'The organization owner cannot be removed')
       );
     }
     if (result === 'INSUFFICIENT_PERMISSIONS') {
       return sendErrorResponse(
         res,
-        createErrorResponse(403, 'Insufficient permissions', {
-          general: 'Admins can only remove members, not other admins'
-        })
+        createErrorResponse(
+          403,
+          'Admins can only remove members, not other admins'
+        )
       );
     }
 
