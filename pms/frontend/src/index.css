@@ -65,6 +65,24 @@ input {
 .me-3 {
   margin-right: 24px;
 }
+.g-1 {
+  gap: 8px;
+}
+.g-2 {
+  gap: 16px;
+}
+.g-3 {
+  gap: 24px;
+}
+.d-flex {
+  display: flex;
+}
+.w-50 {
+  width: 50%;
+}
+.w-100 {
+  width: 100%;
+}
 .flex-column {
   display: flex;
   flex-direction: column;
@@ -385,7 +403,6 @@ form input {
   background: #f9fafb;
 }
 .form-select {
-  width: 50%;
   padding: 6px;
   border: 1px solid #ccc;
   border-radius: 4px;

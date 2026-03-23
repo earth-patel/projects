@@ -1,10 +1,12 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router';
 
+import ChangeRoleModal from '../components/ChangeRoleModal';
 import Loading from '../components/Loading';
 import Table from '../components/Table';
 import { useAppDispatch, useAppSelector } from '../store/index';
 import {
+  changeMemberRole,
   listOrgMembers,
   removeMember
 } from '../store/organization/organization.thunk';
@@ -19,8 +21,18 @@ const ROLE_BADGE: Record<string, string> = {
 const Dashboard = () => {
   const dispatch = useAppDispatch();
   const { authLoading, user } = useAppSelector(state => state.auth);
-  const { selectedOrganization, members, membersLoading, removeMemberLoading } =
-    useAppSelector(state => state.organization);
+  const {
+    selectedOrganization,
+    members,
+    membersLoading,
+    removeMemberLoading,
+    changeRoleLoading
+  } = useAppSelector(state => state.organization);
+
+  // State for which member's role we're changing, if any. When null, the modal is closed.
+  const [changeRoleTarget, setChangeRoleTarget] = useState<OrgMember | null>(
+    null
+  );
 
   useEffect(() => {
     if (!selectedOrganization) return;
@@ -50,6 +62,10 @@ const Dashboard = () => {
     return false;
   };
 
+  // Only OWNER can change roles
+  const canChangeRole = (member: OrgMember) =>
+    currentUserRole === 'OWNER' && canActOn(member);
+
   const handleRemove = (member: OrgMember) => {
     dispatch(
       removeMember({
@@ -59,6 +75,23 @@ const Dashboard = () => {
     )
       .unwrap()
       .then(() => {
+        dispatch(listOrgMembers(selectedOrganization.id));
+      });
+  };
+
+  const handleChangeRole = (roleName: string) => {
+    if (!changeRoleTarget) return;
+
+    dispatch(
+      changeMemberRole({
+        orgId: selectedOrganization.id,
+        userId: changeRoleTarget.id,
+        roleName
+      })
+    )
+      .unwrap()
+      .then(() => {
+        setChangeRoleTarget(null);
         dispatch(listOrgMembers(selectedOrganization.id));
       });
   };
@@ -89,7 +122,16 @@ const Dashboard = () => {
           {
             header: 'Actions',
             render: (m: OrgMember) => (
-              <div>
+              <div className="d-flex g-1">
+                {canChangeRole(m) && (
+                  <button
+                    className="btn btn-secondary btn-sm"
+                    disabled={changeRoleLoading}
+                    onClick={() => setChangeRoleTarget(m)}
+                  >
+                    Change Role
+                  </button>
+                )}
                 {canRemove(m) && (
                   <button
                     className="btn btn-danger btn-sm"
@@ -131,6 +173,19 @@ const Dashboard = () => {
           />
         )}
       </div>
+
+      {/* Change Role Modal — key forces a fresh useState when target changes */}
+      {changeRoleTarget && (
+        <ChangeRoleModal
+          key={changeRoleTarget.id}
+          isOpen={true}
+          memberName={`${changeRoleTarget.firstName} ${changeRoleTarget.lastName}`}
+          currentRole={changeRoleTarget.role}
+          onClose={() => setChangeRoleTarget(null)}
+          onSubmit={handleChangeRole}
+          loading={changeRoleLoading}
+        />
+      )}
     </div>
   );
 };

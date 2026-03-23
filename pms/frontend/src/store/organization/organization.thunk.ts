@@ -64,7 +64,7 @@ export const changeMemberRole = createAsyncThunk<
   'organization/changeMemberRole',
   ({ orgId, userId, roleName }, { rejectWithValue }) => {
     return api
-      .patch(`organization/${orgId}/members/${userId}/role`, { roleName })
+      .put(`organization/${orgId}/members/${userId}/role`, { roleName })
       .then(res => res.data)
       .catch(err => rejectWithValue(err.response?.data));
   }
