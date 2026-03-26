@@ -23,7 +23,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      <div className='d-flex g-1'>
+      <div className="d-flex g-1">
         <button
           className="btn btn-secondary"
           onClick={() => navigate('/organization-selection')}
