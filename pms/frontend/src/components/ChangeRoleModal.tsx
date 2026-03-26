@@ -12,7 +12,7 @@ interface ChangeRoleModalProps {
   loading?: boolean;
 }
 
-const ASSIGNABLE_ROLES = ['Admin', 'Member'];
+const ASSIGNABLE_ROLES = ['ADMIN', 'MEMBER'];
 
 const ChangeRoleModal = ({
   isOpen,
@@ -37,7 +37,7 @@ const ChangeRoleModal = ({
       submitText="Update Role"
       validate={() => {
         if (roleName === '') return false; // silent — no selection yet
-        if (roleName.toLowerCase() === currentRole.toLowerCase()) {
+        if (roleName.toUpperCase() === currentRole.toUpperCase()) {
           toast.error('Member already has this role');
           return false;
         }
