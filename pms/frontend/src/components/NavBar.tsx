@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 import { logout } from '../store/auth/auth.slice';
 import { useAppDispatch, useAppSelector } from '../store/index';
@@ -6,10 +6,13 @@ import { useAppDispatch, useAppSelector } from '../store/index';
 const NavBar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const user = useAppSelector(state => state.auth.user);
   const selectedOrg = useAppSelector(
     state => state.organization.selectedOrganization
   );
+
+  const isOnOrgSelection = pathname === '/organization-selection';
 
   const onLogout = () => {
     dispatch(logout());
@@ -26,18 +29,22 @@ const NavBar = () => {
         </div>
       </div>
 
-      <div className="user-info text-center">
-        <div className="title">{selectedOrg?.name}</div>
-        <div className="subtitle">{selectedOrg?.role}</div>
-      </div>
+      {!isOnOrgSelection && selectedOrg && (
+        <div className="user-info text-center">
+          <div className="title">{selectedOrg?.name}</div>
+          <div className="subtitle">{selectedOrg?.role}</div>
+        </div>
+      )}
 
       <div className="d-flex g-1">
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate('/organization-selection')}
-        >
-          Switch Org
-        </button>
+        {!isOnOrgSelection && selectedOrg && (
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate('/organization-selection')}
+          >
+            Switch Org
+          </button>
+        )}
         <button className="btn btn-danger" onClick={onLogout}>
           Logout
         </button>
