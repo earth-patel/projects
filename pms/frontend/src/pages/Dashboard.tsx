@@ -150,14 +150,6 @@ const Dashboard = () => {
 
   return (
     <div className="container">
-      {/* Header */}
-      <div className="mb-3">
-        <h2 className="heading">{selectedOrganization.name}</h2>
-        <p className="subtitle mt-1">
-          Your role: <strong>{selectedOrganization.role}</strong>
-        </p>
-      </div>
-
       {/* Members section */}
       <div>
         <div className="title mb-1">Members</div>

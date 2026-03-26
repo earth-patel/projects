@@ -7,6 +7,7 @@ const NavBar = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(state => state.auth.user);
+  const selectedOrg = useAppSelector(state => state.organization.selectedOrganization);
 
   const onLogout = () => {
     dispatch(logout());
@@ -23,7 +24,14 @@ const NavBar = () => {
         </div>
       </div>
 
-      <div className="d-flex g-1">
+      <div className="user-info text-center">
+        <div className="title">
+          {selectedOrg?.name}
+        </div>
+        <div className="subtitle">{selectedOrg?.role}</div>
+      </div>
+
+      <div className='d-flex g-1'>
         <button
           className="btn btn-secondary"
           onClick={() => navigate('/organization-selection')}
