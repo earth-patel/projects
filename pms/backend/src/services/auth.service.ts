@@ -37,10 +37,14 @@ export const registerUserWithOrganization = async (data: RegisterDto) => {
 
 export const validateLogin = async (email: string, password: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) return null;
+  if (!isValid) {
+    return null;
+  }
 
   return user;
 };
@@ -62,7 +66,9 @@ export const verifyEmailByToken = async (token: string) => {
     where: { verificationCode: token }
   });
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   return prisma.user.update({
     where: { id: user.id },
@@ -78,8 +84,12 @@ export const resendVerificationEmailByEmail = async (email: string) => {
     where: { email }
   });
 
-  if (!user) return null;
-  if (user.emailVerifiedAt) return 'EMAIL_ALREADY_VERIFIED';
+  if (!user) {
+    return null;
+  }
+  if (user.emailVerifiedAt) {
+    return 'EMAIL_ALREADY_VERIFIED';
+  }
 
   const verificationCode = generateToken();
 
@@ -95,7 +105,9 @@ export const resendVerificationEmailByEmail = async (email: string) => {
 
 export const forgotPasswordByEmail = async (email: string) => {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   const rawToken = generateToken();
   const hashedToken = crypto
@@ -133,7 +145,9 @@ export const resetPasswordByToken = async (
     }
   });
 
-  if (!user) return null;
+  if (!user) {
+    return null;
+  }
 
   const hashedPassword = await bcrypt.hash(newPassword, SALT_ROUNDS);
 

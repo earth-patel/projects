@@ -11,14 +11,21 @@ const isValidPasswordLength = (password: string) =>
   password.length >= PASSWORD_MIN_LENGTH;
 
 const validateEmail = (email: string) => {
-  if (!email) return 'Email is required';
-  if (!isValidEmail(email)) return 'Invalid email format';
+  if (!email) {
+    return 'Email is required';
+  }
+  if (!isValidEmail(email)) {
+    return 'Invalid email format';
+  }
 };
 
 const validatePassword = (password: string) => {
-  if (!password) return 'Password is required';
-  if (!isValidPasswordLength(password))
+  if (!password) {
+    return 'Password is required';
+  }
+  if (!isValidPasswordLength(password)) {
     return `Password must be at least 8 characters long`;
+  }
 };
 
 /* ---------- TYPES ---------- */
@@ -28,14 +35,22 @@ type ValidationErrors<T> = Partial<Record<keyof T, string>>;
 export const validateRegisterDto = (data: RegisterDto) => {
   const errors: ValidationErrors<RegisterDto> = {};
 
-  if (!data.firstName) errors.firstName = 'First name is required';
-  if (!data.lastName) errors.lastName = 'Last name is required';
+  if (!data.firstName) {
+    errors.firstName = 'First name is required';
+  }
+  if (!data.lastName) {
+    errors.lastName = 'Last name is required';
+  }
 
   const emailError = validateEmail(data.email);
-  if (emailError) errors.email = emailError;
+  if (emailError) {
+    errors.email = emailError;
+  }
 
   const passwordError = validatePassword(data.password);
-  if (passwordError) errors.password = passwordError;
+  if (passwordError) {
+    errors.password = passwordError;
+  }
 
   return errors;
 };
@@ -44,10 +59,14 @@ export const validateLoginDto = (data: LoginDto) => {
   const errors: ValidationErrors<LoginDto> = {};
 
   const emailError = validateEmail(data.email);
-  if (emailError) errors.email = emailError;
+  if (emailError) {
+    errors.email = emailError;
+  }
 
   const passwordError = validatePassword(data.password);
-  if (passwordError) errors.password = passwordError;
+  if (passwordError) {
+    errors.password = passwordError;
+  }
 
   return errors;
 };

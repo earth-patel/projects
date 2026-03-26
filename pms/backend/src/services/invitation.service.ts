@@ -19,13 +19,17 @@ export const sendInvitation = async ({
 }: SendInvitationInput) => {
   // Check if role is valid
   const role = await prisma.role.findUnique({ where: { name: roleName } });
-  if (!role) return 'INVALID_ROLE';
+  if (!role) {
+    return 'INVALID_ROLE';
+  }
 
   // Prevent inviting yourself
   const inviter = await prisma.user.findUnique({
     where: { id: invitedByUserId }
   });
-  if (inviter?.email === email) return 'CANNOT_INVITE_SELF';
+  if (inviter?.email === email) {
+    return 'CANNOT_INVITE_SELF';
+  }
 
   // Check if they're already a member of the organization
   const existingUser = await prisma.user.findFirst({ where: { email } });
@@ -33,7 +37,9 @@ export const sendInvitation = async ({
     const existingMember = await prisma.organizationUserRole.findFirst({
       where: { userId: existingUser.id, organizationId }
     });
-    if (existingMember) return 'ALREADY_MEMBER';
+    if (existingMember) {
+      return 'ALREADY_MEMBER';
+    }
   }
 
   // Check for a still-valid pending invitation for this email + org
@@ -45,7 +51,9 @@ export const sendInvitation = async ({
       expiresAt: { gt: new Date() }
     }
   });
-  if (existingInvite) return 'INVITE_ALREADY_SENT';
+  if (existingInvite) {
+    return 'INVITE_ALREADY_SENT';
+  }
 
   // Create the invitation
   const token = generateToken();
@@ -105,17 +113,23 @@ export const acceptInvitationByToken = async (
     }
   });
 
-  if (!invitation) return null;
+  if (!invitation) {
+    return null;
+  }
 
   // Ensure the user accepting the invite has the same email as the invitation
   const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user || user.email !== invitation.email) return 'EMAIL_MISMATCH';
+  if (!user || user.email !== invitation.email) {
+    return 'EMAIL_MISMATCH';
+  }
 
   // Check if they're already a member of the organization
   const existingMembership = await prisma.organizationUserRole.findFirst({
     where: { userId, organizationId: invitation.organizationId }
   });
-  if (existingMembership) return 'ALREADY_MEMBER';
+  if (existingMembership) {
+    return 'ALREADY_MEMBER';
+  }
 
   return prisma.$transaction(async tx => {
     await tx.organizationUserRole.create({

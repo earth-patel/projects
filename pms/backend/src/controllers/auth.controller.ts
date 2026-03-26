@@ -66,13 +66,14 @@ export const login = async (req: Request, res: Response) => {
 
   try {
     const user = await validateLogin(data.email, data.password);
-    if (!user)
+    if (!user) {
       return sendErrorResponse(
         res,
         createErrorResponse(401, 'Invalid email or password', {
           form: 'Invalid email or password'
         })
       );
+    }
 
     if (!user.emailVerifiedAt) {
       return sendErrorResponse(
@@ -136,13 +137,14 @@ export const verifyEmail = async (req: Request, res: Response) => {
   try {
     const user = await verifyEmailByToken(token);
 
-    if (!user)
+    if (!user) {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Invalid or expired token', {
           form: 'Invalid or expired token'
         })
       );
+    }
 
     return res.status(200).json({ message: 'Email verified successfully.' });
   } catch (error) {
@@ -154,24 +156,26 @@ export const verifyEmail = async (req: Request, res: Response) => {
 export const resendVerificationEmail = async (req: Request, res: Response) => {
   const { email } = req.body as { email?: string };
 
-  if (!email)
+  if (!email) {
     return sendErrorResponse(
       res,
       createErrorResponse(400, 'Email is required', {
         email: 'Email is required'
       })
     );
+  }
 
   try {
     const result = await resendVerificationEmailByEmail(email);
 
-    if (!result)
+    if (!result) {
       return sendErrorResponse(
         res,
         createErrorResponse(404, 'Account not found', {
           email: 'Account not found'
         })
       );
+    }
 
     if (result === 'EMAIL_ALREADY_VERIFIED') {
       return sendErrorResponse(
@@ -194,24 +198,26 @@ export const resendVerificationEmail = async (req: Request, res: Response) => {
 export const forgotPassword = async (req: Request, res: Response) => {
   const { email } = req.body as { email?: string };
 
-  if (!email)
+  if (!email) {
     return sendErrorResponse(
       res,
       createErrorResponse(400, 'Email is required', {
         email: 'Email is required'
       })
     );
+  }
 
   try {
     const result = await forgotPasswordByEmail(email);
 
-    if (!result)
+    if (!result) {
       return sendErrorResponse(
         res,
         createErrorResponse(404, 'Account not found', {
           email: 'Account not found'
         })
       );
+    }
 
     return res
       .status(200)

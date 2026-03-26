@@ -97,17 +97,23 @@ export const removeOrganizationMember = async ({
   requestingUserId: number;
 }) => {
   // cannot remove yourself
-  if (targetUserId === requestingUserId) return 'CANNOT_REMOVE_SELF';
+  if (targetUserId === requestingUserId) {
+    return 'CANNOT_REMOVE_SELF';
+  }
 
   const targetMembership = await prisma.organizationUserRole.findFirst({
     where: { userId: targetUserId, organizationId },
     include: { role: { select: { name: true } } }
   });
 
-  if (!targetMembership) return 'MEMBER_NOT_FOUND';
+  if (!targetMembership) {
+    return 'MEMBER_NOT_FOUND';
+  }
 
   // OWNER cannot be removed
-  if (targetMembership.role.name === 'OWNER') return 'CANNOT_REMOVE_OWNER';
+  if (targetMembership.role.name === 'OWNER') {
+    return 'CANNOT_REMOVE_OWNER';
+  }
 
   // Get requesting user's role to enforce ADMIN restriction
   const requestingMembership = await prisma.organizationUserRole.findFirst({
@@ -142,16 +148,22 @@ export const changeOrganizationMemberRole = async ({
   requestingUserId: number;
 }) => {
   // Cannot change your own role
-  if (targetUserId === requestingUserId) return 'CANNOT_CHANGE_OWN_ROLE';
+  if (targetUserId === requestingUserId) {
+    return 'CANNOT_CHANGE_OWN_ROLE';
+  }
 
   // OWNER role cannot be assigned via this flow
-  if (newRoleName === 'OWNER') return 'INVALID_ROLE';
+  if (newRoleName === 'OWNER') {
+    return 'INVALID_ROLE';
+  }
 
   // Validate the new role exists
   const newRole = await prisma.role.findUnique({
     where: { name: newRoleName }
   });
-  if (!newRole) return 'INVALID_ROLE';
+  if (!newRole) {
+    return 'INVALID_ROLE';
+  }
 
   // Get target's current membership
   const targetMembership = await prisma.organizationUserRole.findFirst({
@@ -159,13 +171,19 @@ export const changeOrganizationMemberRole = async ({
     include: { role: { select: { name: true } } }
   });
 
-  if (!targetMembership) return 'MEMBER_NOT_FOUND';
+  if (!targetMembership) {
+    return 'MEMBER_NOT_FOUND';
+  }
 
   // OWNER's role cannot be changed
-  if (targetMembership.role.name === 'OWNER') return 'CANNOT_CHANGE_OWNER_ROLE';
+  if (targetMembership.role.name === 'OWNER') {
+    return 'CANNOT_CHANGE_OWNER_ROLE';
+  }
 
   // No-op guard: If the target already has the desired role, do nothing
-  if (targetMembership.role.name === newRoleName) return 'ALREADY_HAS_ROLE';
+  if (targetMembership.role.name === newRoleName) {
+    return 'ALREADY_HAS_ROLE';
+  }
 
   await prisma.organizationUserRole.update({
     where: { id: targetMembership.id },
