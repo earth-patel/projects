@@ -83,6 +83,10 @@ input {
 .justify-content-center {
   justify-content: center;
 }
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 .w-50 {
   width: 50%;
 }
@@ -91,10 +95,6 @@ input {
 }
 .text-center {
   text-align: center;
-}
-.flex-column {
-  display: flex;
-  flex-direction: column;
 }
 .heading {
   font-size: 20px;
