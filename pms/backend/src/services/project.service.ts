@@ -1,4 +1,4 @@
-import prisma from "../prisma";
+import prisma from '../prisma';
 
 export const listProjects = async (organizationId: number) => {
   return prisma.project.findMany({
@@ -12,8 +12,8 @@ export const listProjects = async (organizationId: number) => {
       _count: { select: { tasks: { where: { status: 1 } } } }
     },
     orderBy: { createdAt: 'desc' }
-  })
-}
+  });
+};
 
 export const createProject = async ({
   name,
@@ -33,8 +33,8 @@ export const createProject = async ({
       organizationId,
       createdById
     }
-  })
-}
+  });
+};
 
 export const deleteProject = async ({
   projectId,
@@ -45,7 +45,7 @@ export const deleteProject = async ({
 }) => {
   const project = await prisma.project.findFirst({
     where: { id: projectId, organizationId, status: 1 }
-  })
+  });
 
   if (!project) {
     return 'PROJECT_NOT_FOUND';
@@ -54,7 +54,7 @@ export const deleteProject = async ({
   await prisma.project.update({
     where: { id: projectId },
     data: { status: 0 }
-  })
+  });
 
   return true;
-}
+};
