@@ -12,8 +12,11 @@ import { requireRole } from '../middleware/permission.middleware';
 
 const router = Router();
 
+/* ---------- ORGANIZATIONS ---------- */
 router.get('/my-organizations', authMiddleware, listUserOrganizations);
 router.post('/create-organization', authMiddleware, createOrganization);
+
+/* ---------- MEMBERS ---------- */
 router.get(
   '/:organizationId/members',
   authMiddleware,
