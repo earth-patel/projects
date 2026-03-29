@@ -1,7 +1,7 @@
 import { PrismaClient } from '../../generated/prisma/client';
 
 const seedModules = async (prisma: PrismaClient) => {
-  const modules = ['USERS', 'ORGANIZATIONS', 'ROLES', 'PERMISSIONS'];
+  const modules = ['USERS', 'ORGANIZATIONS', 'ROLES', 'PERMISSIONS', 'PROJECTS', 'TASKS'];
 
   for (const module of modules) {
     await prisma.module.upsert({
