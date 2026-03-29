@@ -7,7 +7,11 @@ import {
   removeMember,
   updateMemberRole
 } from '../controllers/organization.controller';
-import { createOrgProject, deleteOrgProject, listOrgProjects } from '../controllers/project.controller';
+import {
+  createOrgProject,
+  deleteOrgProject,
+  listOrgProjects
+} from '../controllers/project.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 import { requireRole } from '../middleware/permission.middleware';
 
@@ -46,16 +50,16 @@ router.get(
   authMiddleware,
   requireRole(['OWNER', 'ADMIN', 'MEMBER']),
   listOrgProjects
-)
+);
 router.post(
   '/:organizationId/projects',
   authMiddleware,
   requireRole(['OWNER', 'ADMIN']),
   createOrgProject
-)
+);
 router.delete(
   '/:organizationId/projects/:projectId',
   authMiddleware,
   requireRole(['OWNER', 'ADMIN']),
   deleteOrgProject
-)
+);
