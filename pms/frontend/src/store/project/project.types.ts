@@ -11,8 +11,8 @@ export interface ProjectItem {
 
 export interface ProjectState {
   projects: ProjectItem[];
-  projectsLoading: boolean;
-  projectsError: ProjectApiErrorResponse | null;
+  projectLoading: boolean;
+  projectError: ProjectApiErrorResponse | null;
   createProjectLoading: boolean;
   deleteProjectLoading: boolean;
 }
