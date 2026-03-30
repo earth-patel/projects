@@ -18,6 +18,11 @@ type InvitationErrors = {
   general?: string;
 };
 
+type ProjectErrors = {
+  name?: string;
+  general?: string;
+};
+
 export type AuthApiErrorResponse = {
   message?: string;
   errors?: AuthErrors;
@@ -31,4 +36,9 @@ export type OrganizationApiErrorResponse = {
 export type InvitationApiErrorResponse = {
   message?: string;
   errors?: InvitationErrors;
+};
+
+export type ProjectApiErrorResponse = {
+  message?: string;
+  errors?: ProjectErrors;
 };
