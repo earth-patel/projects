@@ -69,14 +69,11 @@ const projectSlice = createSlice({
       .addCase(deleteProject.rejected, (state, action) => {
         state.deleteProjectLoading = false;
         toast.error(action.payload?.message || 'Failed to delete project.');
-      })
+      });
   }
 });
 
-export const {
-  clearProjects,
-  clearProjectError,
-  setProjectError
-} = projectSlice.actions;
+export const { clearProjects, clearProjectError, setProjectError } =
+  projectSlice.actions;
 
 export default projectSlice.reducer;
