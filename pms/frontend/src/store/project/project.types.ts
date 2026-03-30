@@ -1,4 +1,4 @@
-import { type ProjectApiErrorResponse } from "../../types/api.types";
+import { type ProjectApiErrorResponse } from '../../types/api.types';
 
 export interface ProjectItem {
   id: number;

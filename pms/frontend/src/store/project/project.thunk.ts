@@ -12,21 +12,24 @@ export const listProjects = createAsyncThunk<
 >('project/listProjects', (orgId, { rejectWithValue }) => {
   return api
     .get(`/organization/${orgId}/projects`)
-    .then((response) => response.data)
+    .then(response => response.data)
     .catch(err => rejectWithValue(err.response.data));
-})
+});
 
 /* ---------- CREATE PROJECT ---------- */
 export const createProject = createAsyncThunk<
   { message: string }, // returned on success
   { orgId: number; name: string; description?: string }, // argument type
   { rejectValue: ProjectApiErrorResponse }
->('project/createProject', ({ orgId, name, description }, { rejectWithValue }) => {
-  return api
-    .post(`/organization/${orgId}/projects`, { name, description })
-    .then((response) => response.data)
-    .catch(err => rejectWithValue(err.response.data));
-})
+>(
+  'project/createProject',
+  ({ orgId, name, description }, { rejectWithValue }) => {
+    return api
+      .post(`/organization/${orgId}/projects`, { name, description })
+      .then(response => response.data)
+      .catch(err => rejectWithValue(err.response.data));
+  }
+);
 
 /* ---------- DELETE PROJECT ---------- */
 export const deleteProject = createAsyncThunk<
@@ -36,6 +39,6 @@ export const deleteProject = createAsyncThunk<
 >('project/deleteProject', ({ orgId, projectId }, { rejectWithValue }) => {
   return api
     .delete(`/organization/${orgId}/projects/${projectId}`)
-    .then((response) => response.data)
+    .then(response => response.data)
     .catch(err => rejectWithValue(err.response.data));
-})
+});
