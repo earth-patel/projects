@@ -20,7 +20,7 @@ const ROLE_BADGE: Record<string, string> = {
 
 const Members = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const { user } = useAppSelector(state => state.auth);
   const {
     selectedOrganization,
@@ -156,7 +156,10 @@ const Members = () => {
           <div className="title">Members</div>
           <div className="subtitle">{selectedOrganization.name}</div>
         </div>
-        <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>
+        <button
+          className="btn btn-secondary"
+          onClick={() => navigate('/dashboard')}
+        >
           Back to Projects
         </button>
       </div>

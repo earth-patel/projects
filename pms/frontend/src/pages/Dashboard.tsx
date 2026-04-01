@@ -6,8 +6,15 @@ import FormInput from '../components/FormInput';
 import FormModal from '../components/FormModal';
 import Loading from '../components/Loading';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import { clearProjectError, setProjectError } from '../store/project/project.slice';
-import { createProject, deleteProject, listProjects } from '../store/project/project.thunk';
+import {
+  clearProjectError,
+  setProjectError
+} from '../store/project/project.slice';
+import {
+  createProject,
+  deleteProject,
+  listProjects
+} from '../store/project/project.thunk';
 import { type ProjectItem } from '../store/project/project.types';
 
 const Dashboard = () => {
@@ -15,9 +22,13 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useAppSelector(state => state.auth);
   const { selectedOrganization } = useAppSelector(state => state.organization);
-  const { projects, projectLoading, createProjectLoading, deleteProjectLoading, projectError } = useAppSelector(
-    state => state.project
-  );
+  const {
+    projects,
+    projectLoading,
+    createProjectLoading,
+    deleteProjectLoading,
+    projectError
+  } = useAppSelector(state => state.project);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState('');
@@ -29,28 +40,33 @@ const Dashboard = () => {
   }, [dispatch, selectedOrganization]);
 
   if (!user) <Loading />;
-  if (!selectedOrganization) return <Navigate to="/organization-selection" replace />;
+  if (!selectedOrganization)
+    return <Navigate to="/organization-selection" replace />;
 
-  const canManageProjects = ['OWNER', 'ADMIN'].includes(selectedOrganization.role);
+  const canManageProjects = ['OWNER', 'ADMIN'].includes(
+    selectedOrganization.role
+  );
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
-  }
+  };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setName('');
     setDescription('');
     dispatch(clearProjectError());
-  }
+  };
 
   const validateCreate = () => {
     if (!name.trim()) {
-      dispatch(setProjectError({ errors: { name: 'Project name is required' } }));
+      dispatch(
+        setProjectError({ errors: { name: 'Project name is required' } })
+      );
       return false;
     }
     return true;
-  }
+  };
 
   const handleCreate = () => {
     dispatch(
@@ -65,35 +81,34 @@ const Dashboard = () => {
         dispatch(listProjects(selectedOrganization.id));
         handleCloseModal();
       });
-  }
+  };
 
   const handleDelete = (project: ProjectItem) => {
-    dispatch(deleteProject({ orgId: selectedOrganization.id, projectId: project.id }))
+    dispatch(
+      deleteProject({ orgId: selectedOrganization.id, projectId: project.id })
+    )
       .unwrap()
       .then(() => {
         dispatch(listProjects(selectedOrganization.id));
-      })
-  }
+      });
+  };
 
   return (
     <div className="container">
       <div className="d-flex align-items-center justify-content-between mb-3">
         <div>
-          <div className='title'>Projects</div>
-          <div className='subtitle'>{selectedOrganization.name}</div>
+          <div className="title">Projects</div>
+          <div className="subtitle">{selectedOrganization.name}</div>
         </div>
-        <div className='d-flex g-1'>
+        <div className="d-flex g-1">
           <button
-            className='btn btn-secondary'
+            className="btn btn-secondary"
             onClick={() => navigate('/dashboard/members')}
           >
             Members
           </button>
           {canManageProjects && (
-            <button
-              className='btn btn-primary'
-              onClick={handleOpenModal}
-            >
+            <button className="btn btn-primary" onClick={handleOpenModal}>
               New Project
             </button>
           )}
@@ -103,9 +118,9 @@ const Dashboard = () => {
       {projectLoading ? (
         <Loading />
       ) : projects.length === 0 ? (
-        <div className='subtitle'>No projects yet.</div>
-      ): (
-        <table className='table'>
+        <div className="subtitle">No projects yet.</div>
+      ) : (
+        <table className="table">
           <thead>
             <tr>
               <th>Name</th>
@@ -119,7 +134,7 @@ const Dashboard = () => {
             {projects.map(project => (
               <tr
                 key={project.id}
-                className='cursor-pointer'
+                className="cursor-pointer"
                 onClick={() => navigate(`/dashboard/projects/${project.id}`)}
               >
                 <td>{project.name}</td>
@@ -129,9 +144,7 @@ const Dashboard = () => {
                   {project.createdBy.firstName} {project.createdBy.lastName}
                 </td>
                 {canManageProjects && (
-                  <td
-                    onClick={e => e.stopPropagation()}
-                  >
+                  <td onClick={e => e.stopPropagation()}>
                     <button
                       className="btn btn-danger btn-sm"
                       disabled={deleteProjectLoading}
