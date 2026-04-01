@@ -1,183 +1,177 @@
-import { useState, useEffect } from 'react';
-import { Navigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 
-import ChangeRoleModal from '../components/ChangeRoleModal';
+import Error from '../components/Error';
+import FormInput from '../components/FormInput';
+import FormModal from '../components/FormModal';
 import Loading from '../components/Loading';
-import Table from '../components/Table';
 import { useAppDispatch, useAppSelector } from '../store/index';
-import {
-  changeMemberRole,
-  listOrgMembers,
-  removeMember
-} from '../store/organization/organization.thunk';
-import { type OrgMember } from '../store/organization/organization.types';
-
-const ROLE_BADGE: Record<string, string> = {
-  OWNER: 'badge-purple',
-  ADMIN: 'badge-blue',
-  MEMBER: 'badge-gray'
-};
+import { clearProjectError, setProjectError } from '../store/project/project.slice';
+import { createProject, deleteProject, listProjects } from '../store/project/project.thunk';
+import { type ProjectItem } from '../store/project/project.types';
 
 const Dashboard = () => {
   const dispatch = useAppDispatch();
-  const { authLoading, user } = useAppSelector(state => state.auth);
-  const {
-    selectedOrganization,
-    members,
-    membersLoading,
-    removeMemberLoading,
-    changeRoleLoading
-  } = useAppSelector(state => state.organization);
-
-  // State for which member's role we're changing, if any. When null, the modal is closed.
-  const [changeRoleTarget, setChangeRoleTarget] = useState<OrgMember | null>(
-    null
+  const navigate = useNavigate();
+  const { user } = useAppSelector(state => state.auth);
+  const { selectedOrganization } = useAppSelector(state => state.organization);
+  const { projects, projectLoading, createProjectLoading, deleteProjectLoading, projectError } = useAppSelector(
+    state => state.project
   );
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     if (!selectedOrganization) return;
-    dispatch(listOrgMembers(selectedOrganization.id));
+    dispatch(listProjects(selectedOrganization.id));
   }, [dispatch, selectedOrganization]);
 
-  if (authLoading || !user) return <Loading />;
+  if (!user) <Loading />;
+  if (!selectedOrganization) return <Navigate to="/organization-selection" replace />;
 
-  // Shouldn't normally happen, but guard against direct URL access
-  if (!selectedOrganization) {
-    return <Navigate to="/organization-selection" replace />;
+  const canManageProjects = ['OWNER', 'ADMIN'].includes(selectedOrganization.role);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
   }
 
-  const currentUserRole = selectedOrganization.role;
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setName('');
+    setDescription('');
+    dispatch(clearProjectError());
+  }
 
-  // A row can be acted upon if:
-  //  - it's not the current user
-  //  - it's not an OWNER (protected)
-  const canActOn = (member: OrgMember) =>
-    member.id !== user.id && member.role !== 'OWNER';
+  const validateCreate = () => {
+    if (!name.trim()) {
+      dispatch(setProjectError({ errors: { name: 'Project name is required' } }));
+      return false;
+    }
+    return true;
+  }
 
-  // Only OWNER can remove ADMIN; both OWNER and ADMIN can remove MEMBER
-  const canRemove = (member: OrgMember) => {
-    if (!canActOn(member)) return false;
-    if (currentUserRole === 'OWNER') return true;
-    if (currentUserRole === 'ADMIN') return member.role === 'MEMBER';
-    return false;
-  };
-
-  // Only OWNER can change roles
-  const canChangeRole = (member: OrgMember) =>
-    currentUserRole === 'OWNER' && canActOn(member);
-
-  const handleRemove = (member: OrgMember) => {
+  const handleCreate = () => {
     dispatch(
-      removeMember({
+      createProject({
         orgId: selectedOrganization.id,
-        userId: member.id
+        name,
+        description: description.trim() || undefined
       })
     )
       .unwrap()
       .then(() => {
-        dispatch(listOrgMembers(selectedOrganization.id));
+        dispatch(listProjects(selectedOrganization.id));
+        handleCloseModal();
       });
-  };
+  }
 
-  const handleChangeRole = (roleName: string) => {
-    if (!changeRoleTarget) return;
-
-    dispatch(
-      changeMemberRole({
-        orgId: selectedOrganization.id,
-        userId: changeRoleTarget.id,
-        roleName
-      })
-    )
+  const handleDelete = (project: ProjectItem) => {
+    dispatch(deleteProject({ orgId: selectedOrganization.id, projectId: project.id }))
       .unwrap()
       .then(() => {
-        setChangeRoleTarget(null);
-        dispatch(listOrgMembers(selectedOrganization.id));
-      });
-  };
-
-  const hasAnyActions = members.some(m => canRemove(m));
-
-  const memberColumns = [
-    {
-      header: 'Name',
-      render: (m: OrgMember) => `${m.firstName} ${m.lastName}`
-    },
-    {
-      header: 'Email',
-      render: (m: OrgMember) => m.email
-    },
-    {
-      header: 'Role',
-      render: (m: OrgMember) => (
-        <span className={`badge ${ROLE_BADGE[m.role] ?? 'badge-gray'}`}>
-          {m.role}
-        </span>
-      )
-    },
-    // Only render the Actions column when the current user has at least one
-    // action available — avoids an empty column for plain MEMBERs.
-    ...(hasAnyActions
-      ? [
-          {
-            header: 'Actions',
-            render: (m: OrgMember) => (
-              <div className="d-flex g-1">
-                {canChangeRole(m) && (
-                  <button
-                    className="btn btn-secondary btn-sm"
-                    disabled={changeRoleLoading}
-                    onClick={() => setChangeRoleTarget(m)}
-                  >
-                    Change Role
-                  </button>
-                )}
-                {canRemove(m) && (
-                  <button
-                    className="btn btn-danger btn-sm"
-                    disabled={removeMemberLoading}
-                    onClick={() => handleRemove(m)}
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            )
-          }
-        ]
-      : [])
-  ];
+        dispatch(listProjects(selectedOrganization.id));
+      })
+  }
 
   return (
     <div className="container">
-      {/* Members section */}
-      <div>
-        <div className="title mb-1">Members</div>
-
-        {membersLoading ? (
-          <Loading />
-        ) : (
-          <Table
-            columns={memberColumns}
-            data={members}
-            keyExtractor={m => m.id}
-            emptyMessage="No members found."
-          />
-        )}
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <div className='title'>Projects</div>
+          <div className='subtitle'>{selectedOrganization.name}</div>
+        </div>
+        <div className='d-flex g-1'>
+          <button
+            className='btn btn-secondary'
+            onClick={() => navigate('/dashboard/members')}
+          >
+            Members
+          </button>
+          {canManageProjects && (
+            <button
+              className='btn btn-primary'
+              onClick={handleOpenModal}
+            >
+              New Project
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Change Role Modal — key forces a fresh useState when target changes */}
-      {changeRoleTarget && (
-        <ChangeRoleModal
-          key={changeRoleTarget.id}
-          isOpen={true}
-          memberName={`${changeRoleTarget.firstName} ${changeRoleTarget.lastName}`}
-          currentRole={changeRoleTarget.role}
-          onClose={() => setChangeRoleTarget(null)}
-          onSubmit={handleChangeRole}
-          loading={changeRoleLoading}
-        />
+      {projectLoading ? (
+        <Loading />
+      ) : projects.length === 0 ? (
+        <div className='subtitle'>No projects yet.</div>
+      ): (
+        <table className='table'>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Tasks</th>
+              <th>Created by</th>
+              {canManageProjects && <th>Actions</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {projects.map(project => (
+              <tr
+                key={project.id}
+                className='cursor-pointer'
+                onClick={() => navigate(`/dashboard/projects/${project.id}`)}
+              >
+                <td>{project.name}</td>
+                <td className="subtitle">{project.description || '—'}</td>
+                <td>{project._count.tasks}</td>
+                <td>
+                  {project.createdBy.firstName} {project.createdBy.lastName}
+                </td>
+                {canManageProjects && (
+                  <td
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button
+                      className="btn btn-danger btn-sm"
+                      disabled={deleteProjectLoading}
+                      onClick={() => handleDelete(project)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
+
+      <FormModal
+        isOpen={isModalOpen}
+        title="New Project"
+        onClose={handleCloseModal}
+        onSubmit={handleCreate}
+        submitText="Create"
+        validate={validateCreate}
+        loading={createProjectLoading}
+        loadingText="Creating..."
+      >
+        <FormInput
+          type="text"
+          placeholder="Project name"
+          value={name}
+          error={projectError?.errors?.name}
+          onChange={e => setName(e.target.value)}
+        />
+        <FormInput
+          type="text"
+          placeholder="Description (optional)"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+        <Error error={projectError?.errors?.general} />
+      </FormModal>
     </div>
   );
 };

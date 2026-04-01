@@ -6,6 +6,7 @@ import AcceptInvite from '../pages/AcceptInvite';
 import Dashboard from '../pages/Dashboard';
 import ForgotPassword from '../pages/ForgotPassword';
 import Login from '../pages/Login';
+import Members from '../pages/Members';
 import NotFound from '../pages/NotFound';
 import OrganizationSelection from '../pages/OrganizationSelection';
 import Register from '../pages/Register';
@@ -47,7 +48,8 @@ const router = createBrowserRouter([
             path: '/organization-selection',
             element: <OrganizationSelection />
           },
-          { path: '/dashboard', element: <Dashboard /> }
+          { path: '/dashboard', element: <Dashboard /> },
+          { path: '/dashboard/members', element: <Members /> },
         ]
       }
     ]
