@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router';
 
 import ChangeRoleModal from '../components/ChangeRoleModal';
+import InviteMemberModal from '../components/InviteMemberModal';
 import Loading from '../components/Loading';
 import Table from '../components/Table';
 import { useAppDispatch, useAppSelector } from '../store/index';
@@ -34,6 +35,7 @@ const Members = () => {
   const [changeRoleTarget, setChangeRoleTarget] = useState<OrgMember | null>(
     null
   );
+  const [isInviteOpen, setIsInviteOpen] = useState(false);
 
   useEffect(() => {
     if (!selectedOrganization) return;
@@ -48,6 +50,7 @@ const Members = () => {
   }
 
   const currentUserRole = selectedOrganization.role;
+  const canInvite = ['OWNER', 'ADMIN'].includes(currentUserRole);
 
   // A row can be acted upon if:
   //  - it's not the current user
@@ -155,12 +158,22 @@ const Members = () => {
         <div>
           <div className="heading">Members</div>
         </div>
-        <button
-          className="btn btn-secondary"
-          onClick={() => navigate('/dashboard')}
-        >
-          Projects
-        </button>
+        <div className="d-flex g-1">
+          <button
+            className="btn btn-secondary"
+            onClick={() => navigate('/dashboard')}
+          >
+            Projects
+          </button>
+          {canInvite && (
+            <button
+              className="btn btn-primary"
+              onClick={() => setIsInviteOpen(true)}
+            >
+              Invite Member
+            </button>
+          )}
+        </div>
       </div>
 
       {membersLoading ? (
@@ -183,6 +196,16 @@ const Members = () => {
           onClose={() => setChangeRoleTarget(null)}
           onSubmit={handleChangeRole}
           loading={changeRoleLoading}
+        />
+      )}
+
+      {canInvite && (
+        <InviteMemberModal
+          isOpen={isInviteOpen}
+          organizationId={selectedOrganization.id}
+          organizationName={selectedOrganization.name}
+          userRole={currentUserRole}
+          onClose={() => setIsInviteOpen(false)}
         />
       )}
     </div>
