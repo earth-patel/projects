@@ -97,7 +97,7 @@ const Dashboard = () => {
     <div className="container">
       <div className="d-flex align-items-center justify-content-between mb-3">
         <div>
-          <div className="title">Projects</div>
+          <div className="heading">Projects</div>
         </div>
         <div className="d-flex g-1">
           <button
