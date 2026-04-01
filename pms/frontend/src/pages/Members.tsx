@@ -159,7 +159,7 @@ const Members = () => {
           className="btn btn-secondary"
           onClick={() => navigate('/dashboard')}
         >
-          Back to Projects
+          Projects
         </button>
       </div>
 
