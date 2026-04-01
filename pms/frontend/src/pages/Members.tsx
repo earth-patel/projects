@@ -21,7 +21,7 @@ const ROLE_BADGE: Record<string, string> = {
 const Members = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { user } = useAppSelector(state => state.auth);
+  const { authLoading, user } = useAppSelector(state => state.auth);
   const {
     selectedOrganization,
     members,
@@ -40,7 +40,7 @@ const Members = () => {
     dispatch(listOrgMembers(selectedOrganization.id));
   }, [dispatch, selectedOrganization]);
 
-  if (!user) return <Loading />;
+  if (authLoading || !user) return <Loading />;
 
   // Shouldn't normally happen, but guard against direct URL access
   if (!selectedOrganization) {
