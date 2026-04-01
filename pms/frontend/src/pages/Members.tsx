@@ -154,7 +154,6 @@ const Members = () => {
       <div className="d-flex align-items-center justify-content-between mb-3">
         <div>
           <div className="title">Members</div>
-          <div className="subtitle">{selectedOrganization.name}</div>
         </div>
         <button
           className="btn btn-secondary"
