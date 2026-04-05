@@ -9,7 +9,6 @@ CREATE TABLE `projects` (
     `updatedAt` DATETIME(3) NOT NULL,
     `status` TINYINT NOT NULL DEFAULT 1,
 
-    UNIQUE INDEX `projects_organizationId_name_key`(`organizationId`, `name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
