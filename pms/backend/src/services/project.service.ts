@@ -26,6 +26,14 @@ export const createProject = async ({
   organizationId: number;
   createdById: number;
 }) => {
+  const existing = await prisma.project.findFirst({
+    where: { organizationId, name, status: 1 }
+  })
+
+  if (existing) {
+    return 'PROJECT_NAME_TAKEN';
+  }
+
   return prisma.project.create({
     data: {
       name,
@@ -33,7 +41,7 @@ export const createProject = async ({
       organizationId,
       createdById
     }
-  });
+  })
 };
 
 export const deleteProject = async ({

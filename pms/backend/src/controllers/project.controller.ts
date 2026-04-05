@@ -1,7 +1,6 @@
 import { type Response } from 'express';
 
 import { AuthRequest } from '../dtos/auth.dto';
-import { Prisma } from '../../generated/prisma/client';
 import {
   createProject,
   deleteProject,
@@ -24,6 +23,7 @@ export const listOrgProjects = async (req: AuthRequest, res: Response) => {
 
 export const createOrgProject = async (req: AuthRequest, res: Response) => {
   const organizationId = Number(req.params.organizationId);
+  const userId = req.user.userId;
   const { name, description } = req.body as {
     name: string;
     description?: string;
@@ -39,18 +39,14 @@ export const createOrgProject = async (req: AuthRequest, res: Response) => {
   }
 
   try {
-    await createProject({
+    const result = await createProject({
       name,
       description,
       organizationId,
-      createdById: req.user.userId
+      createdById: userId
     });
-    return res.status(201).json({ message: 'Project created successfully' });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2002'
-    ) {
+
+    if (result === 'PROJECT_NAME_TAKEN') {
       return sendErrorResponse(
         res,
         createErrorResponse(400, 'Project name already exists', {
@@ -58,7 +54,8 @@ export const createOrgProject = async (req: AuthRequest, res: Response) => {
         })
       );
     }
-
+    return res.status(201).json({ message: 'Project created successfully' });
+  } catch (error) {
     console.error('Error creating project:', error);
     return sendErrorResponse(res);
   }
