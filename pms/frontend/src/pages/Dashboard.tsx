@@ -123,7 +123,6 @@ const Dashboard = () => {
           <thead>
             <tr>
               <th>Name</th>
-              <th>Description</th>
               <th>Tasks</th>
               <th>Created by</th>
               {canManageProjects && <th>Actions</th>}
@@ -137,7 +136,6 @@ const Dashboard = () => {
                 onClick={() => navigate(`/dashboard/projects/${project.id}`)}
               >
                 <td>{project.name}</td>
-                <td className="subtitle">{project.description || '—'}</td>
                 <td>{project._count.tasks}</td>
                 <td>
                   {project.createdBy.firstName} {project.createdBy.lastName}
@@ -175,12 +173,6 @@ const Dashboard = () => {
           value={name}
           error={projectError?.errors?.name}
           onChange={e => setName(e.target.value)}
-        />
-        <FormInput
-          type="text"
-          placeholder="Description (optional)"
-          value={description}
-          onChange={e => setDescription(e.target.value)}
         />
         <Error error={projectError?.errors?.general} />
       </FormModal>
